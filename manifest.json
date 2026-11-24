@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "e-Gov 電子申請ブリッジ（非公式）",
   "short_name": "e-Gov bridge",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "e-Gov電子申請をブラウザから直接操作するための実験的ブリッジ。デジタル庁とは無関係の非公式ツール。",
   "permissions": [
     "storage",

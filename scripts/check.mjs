@@ -39,6 +39,7 @@ ok(
   'popup exists',
   !!manifest.action?.default_popup && existsSync(path.join(dist, manifest.action.default_popup)),
 );
+ok('scripting permission present', (manifest.permissions ?? []).includes('scripting'));
 
 for (const res of manifest.declarative_net_request?.rule_resources ?? []) {
   const rulePath = path.join(dist, res.path);

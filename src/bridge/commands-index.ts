@@ -1,7 +1,15 @@
 // コマンドレジストリ。未実装コマンドは throw して reject させる（黙殺はしない）。
 // 引数の個数はネイティブ側の読み取り位置から（docs/command-catalog.md 参照）。
-import { state } from './state.js';
-import type { CommandEntry } from './dispatch.js';
+import { state } from './state.ts';
+import type { CommandEntry } from './dispatch.ts';
+import {
+  cmdSignAndSend,
+  cmdSignAndSave,
+  cmdStoreWorkXmlFile,
+  cmdDeleteWorkData,
+  cmdInitAttachList,
+  cmdOpenInBrowser,
+} from './commands-core.ts';
 
 function notImpl(name: string): CommandEntry['fn'] {
   return () => {
@@ -31,7 +39,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclXMLDataAppli_storeWorkXMLFile: {
     oneWay: false,
-    fn: notImpl('F3egclXMLDataAppli_storeWorkXMLFile'),
+    fn: cmdStoreWorkXmlFile,
   },
   SetPresentationOrgInfoPartSignGroup: {
     oneWay: false,
@@ -47,7 +55,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclFileManageAppli_openInBrowser: {
     oneWay: true,
-    fn: notImpl('F3egclFileManageAppli_openInBrowser'),
+    fn: cmdOpenInBrowser,
   },
   F3egclInitAppli_initAppliPartSignGroup: {
     oneWay: false,
@@ -79,11 +87,11 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclFileManageAppli_SignAndSave: {
     oneWay: false,
-    fn: notImpl('F3egclFileManageAppli_SignAndSave'),
+    fn: cmdSignAndSave,
   },
   F3egclFileManageAppli_SignAndSend: {
     oneWay: false,
-    fn: notImpl('F3egclFileManageAppli_SignAndSend'),
+    fn: cmdSignAndSend,
   },
   F3egclXMLDataAppli_changeProc: { oneWay: false, fn: notImpl('F3egclXMLDataAppli_changeProc') },
   F3egclXMLDataAppli_changeForm: { oneWay: false, fn: notImpl('F3egclXMLDataAppli_changeForm') },
@@ -118,7 +126,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclPostProcessAppli_deleteWorkData: {
     oneWay: false,
-    fn: notImpl('F3egclPostProcessAppli_deleteWorkData'),
+    fn: cmdDeleteWorkData,
   },
   F3egclXMLDataAppli_previewForm: { oneWay: false, fn: notImpl('F3egclXMLDataAppli_previewForm') },
   F3egclXMLDataAppli_backProcess: { oneWay: false, fn: notImpl('F3egclXMLDataAppli_backProcess') },
@@ -238,7 +246,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclFileManageAppli_initAttachList: {
     oneWay: false,
-    fn: notImpl('F3egclFileManageAppli_initAttachList'),
+    fn: cmdInitAttachList,
   },
   F3egclReflectSuspendProcInfoClass_reflectSuspendProcInfo: {
     oneWay: false,

@@ -4,8 +4,8 @@
 // ページ ↔ このスクリプト間の通信をすべてページ内で完結させる。
 // ネイティブアプリ相当の処理（署名・送信・ファイル管理）は src/bridge/ 配下の
 // モジュール群が担当する。拡張機能の background は使わない。
-import { dispatchCommand } from '../bridge/dispatch.js';
-import { log } from '../bridge/log.js';
+import { dispatchCommand } from '../bridge/dispatch.ts';
+import { log } from '../bridge/log.ts';
 
 interface WebviewLike {
   addEventListener(type: string, fn: unknown): void;

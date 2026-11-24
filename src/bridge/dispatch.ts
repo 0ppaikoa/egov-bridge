@@ -1,7 +1,7 @@
 // ページからのメッセージをコマンドハンドラへルーティングする。
-import { respondResolve, respondResolveJson, respondReject } from './respond.js';
-import { COMMANDS } from './commands-index.js';
-import { log } from './log.js';
+import { respondResolve, respondResolveJson, respondReject } from './respond.ts';
+import { COMMANDS } from './commands-index.ts';
+import { log } from './log.ts';
 
 export interface ResolveJsonWrapper<T = unknown> {
   __resolveJson: true;

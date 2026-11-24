@@ -10,7 +10,8 @@ const manifest = defineManifest({
   name: 'e-Gov 電子申請ブリッジ（非公式）',
   short_name: 'e-Gov bridge',
   version: pkg.version,
-  description: 'e-Gov電子申請をブラウザから直接操作するための実験的ブリッジ。デジタル庁とは無関係の非公式ツール。',
+  description:
+    'e-Gov電子申請をブラウザから直接操作するための実験的ブリッジ。デジタル庁とは無関係の非公式ツール。',
   minimum_chrome_version: '111',
   permissions: ['declarativeNetRequestWithHostAccess'],
   host_permissions: [
@@ -22,9 +23,7 @@ const manifest = defineManifest({
     'https://account-min.kn.e-gov.go.jp/*',
   ],
   declarative_net_request: {
-    rule_resources: [
-      { id: 'ua', enabled: true, path: 'rules/ua.json' },
-    ],
+    rule_resources: [{ id: 'ua', enabled: true, path: 'rules/ua.json' }],
   },
   action: {
     default_title: 'e-Gov 電子申請ブリッジ（非公式）',
@@ -38,7 +37,7 @@ const manifest = defineManifest({
         'https://shinsei2.sbx.e-gov.go.jp/*',
         'https://shinsei-min.kn.e-gov.go.jp/*',
       ],
-      js: ['src/content/bridge.iife.js'],
+      js: ['src/content/bridge.iife.ts'],
       run_at: 'document_start',
       world: 'MAIN',
     },

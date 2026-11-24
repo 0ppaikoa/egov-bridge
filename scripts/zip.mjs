@@ -1,7 +1,5 @@
 // dist/ の中身を dist/egov-bridge-<version>.zip に固める（ストア提出用）
 import { createWriteStream, mkdirSync, readFileSync } from 'node:fs';
-import { readFile, stat } from 'node:fs/promises';
-import { join, relative } from 'node:path';
 import archiver from 'archiver';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -20,5 +18,8 @@ archive.directory('dist/', false, (entry) => {
 });
 
 await archive.finalize();
-await new Promise((res, rej) => { output.on('close', res); output.on('error', rej); });
+await new Promise((res, rej) => {
+  output.on('close', res);
+  output.on('error', rej);
+});
 console.log('wrote', out, `(${archive.pointer()} bytes)`);

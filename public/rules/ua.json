@@ -14,7 +14,16 @@
     },
     "condition": {
       "urlFilter": "||shinsei.e-gov.go.jp/",
-      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "script", "stylesheet", "image", "font", "other"]
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest",
+        "script",
+        "stylesheet",
+        "image",
+        "font",
+        "other"
+      ]
     }
   },
   {
@@ -32,7 +41,16 @@
     },
     "condition": {
       "urlFilter": "||account.e-gov.go.jp/",
-      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "script", "stylesheet", "image", "font", "other"]
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest",
+        "script",
+        "stylesheet",
+        "image",
+        "font",
+        "other"
+      ]
     }
   },
   {
@@ -50,7 +68,16 @@
     },
     "condition": {
       "urlFilter": "||shinsei.kn.e-gov.go.jp/",
-      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "script", "stylesheet", "image", "font", "other"]
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest",
+        "script",
+        "stylesheet",
+        "image",
+        "font",
+        "other"
+      ]
     }
   },
   {
@@ -68,7 +95,16 @@
     },
     "condition": {
       "urlFilter": "||shinsei2.sbx.e-gov.go.jp/",
-      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "script", "stylesheet", "image", "font", "other"]
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest",
+        "script",
+        "stylesheet",
+        "image",
+        "font",
+        "other"
+      ]
     }
   },
   {
@@ -86,7 +122,16 @@
     },
     "condition": {
       "urlFilter": "||account-min.kn.e-gov.go.jp/",
-      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "script", "stylesheet", "image", "font", "other"]
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "xmlhttprequest",
+        "script",
+        "stylesheet",
+        "image",
+        "font",
+        "other"
+      ]
     }
   }
 ]

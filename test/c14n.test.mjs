@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DOMParser } from '@xmldom/xmldom';
-import { c14n } from '../src/c14n.js';
+import { c14n } from '../src/c14n.ts';
 
 const doc = (s) => new DOMParser().parseFromString(s, 'application/xml');
 
@@ -41,10 +41,11 @@ for (const [name, input, expected] of cases) {
 }
 
 test('部分木 c14n は祖先の名前空間を apex に集約する', () => {
-  const src = '<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/></SignedInfo></Signature>';
+  const src =
+    '<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/></SignedInfo></Signature>';
   const si = doc(src).documentElement.firstChild;
   assert.equal(
     c14n(si),
-    '<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod></SignedInfo>'
+    '<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod></SignedInfo>',
   );
 });

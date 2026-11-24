@@ -3,7 +3,7 @@
 // - content_scripts が world: MAIN / document_start であり、参照ファイルが dist に存在すること
 // - DNR ルールセットが存在しパースできること
 // - zip アーカイブ作成に必要なファイルが揃っていること
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -35,7 +35,10 @@ if (cs) {
   }
 }
 
-ok('popup exists', !!manifest.action?.default_popup && existsSync(path.join(dist, manifest.action.default_popup)));
+ok(
+  'popup exists',
+  !!manifest.action?.default_popup && existsSync(path.join(dist, manifest.action.default_popup)),
+);
 
 for (const res of manifest.declarative_net_request?.rule_resources ?? []) {
   const rulePath = path.join(dist, res.path);
@@ -43,7 +46,10 @@ for (const res of manifest.declarative_net_request?.rule_resources ?? []) {
   if (!existsSync(rulePath)) continue;
   const rules = JSON.parse(readFileSync(rulePath, 'utf8'));
   const ids = new Set(rules.map((r) => r?.id));
-  ok('dnr rule ids unique', ids.size === rules.length && [...ids].every((id) => Number.isInteger(id) && id > 0));
+  ok(
+    'dnr rule ids unique',
+    ids.size === rules.length && [...ids].every((id) => Number.isInteger(id) && id > 0),
+  );
   for (const r of rules) {
     ok(`dnr rule has action/condition: id=${r?.id}`, !!r?.action?.type && !!r?.condition);
   }

@@ -50,7 +50,7 @@ e-Gov電子申請の公式アプリ（"e-Gov電子申請アプリケーション
 ## 構成
 
 - `vite.config.mjs` — Vite + CRXJS。manifest はここで `defineManifest`
-- `src/content/bridge.iife.js` — MAIN world エントリ。IIFE として document_start で実行
+- `src/content/bridge.iife.ts` — MAIN world エントリ。IIFE として document_start で実行
 - `src/bridge/*.js` — ブリッジ本体（ディスパッチャ・応答・コマンド実装）
 - `popup.html` — ツールバーのポップアップ（申請画面へのリンク）
 - `public/rules/ua.json` — User-Agent 上書き用の declarativeNetRequest ルール

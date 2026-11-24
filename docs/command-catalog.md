@@ -114,6 +114,7 @@
 60881|  _jsInteropRestrictChecker.NewRule("F3egclFileManageAppli_AppendAttachedAttribute", allowOnLoading: false, 1000);
         … 全11ルール（60881〜60891）
 ```
+
 `allowOnLoading: false` = ページ読込中は呼び出し拒否、`1000` ms = 同一メソッドの連続呼び出し間隔制限。
 （これは mac の反射経路 `ProcessScriptMessage` に対する制限で、`DispatchExternal` 経路には見当たらない。）
 
@@ -122,99 +123,100 @@
 ## 2. 全コマンド一覧（71件）
 
 列の意味:
+
 - **case行**: DispatchExternal 内で `text == "<コマンド>"` を比較している行
 - **clientApi 行**: 呼び出し先メソッドの宣言行（`ClientApi` クラスは `12487` 開始）
 - **引数**: `a[2]` 以降の個数
 - **応答**: `resolve`(数値/文字列) / `resolveJson` / `none`(応答なし)
 - **分類**: CORE_SIGN / FILE / HTTP / XML / UI / MISC
 
-| # | コマンド | case行 | clientApi メソッド (宣言行) | 引数 | 応答 | 分類 | 内容 |
-|---|---------|-------:|---------------------------|------|------|------|------|
-| 1 | `AddAttachedFile_DragEnter` | 28364 | `AddAttachedFile_DragEnter` (28370) | a[2..2]（1個） | resolve | UI | 添付欄へのドラッグ進入を通知（dragAndDropAppli.dragEnter）。画面演出のみ |
-| 2 | `F3egclInitAppli_initAppli` | 28382 | `F3egclInitAppli_initAppli` (28388) | a[2..14]（13個） | resolve | XML | 申請データ初期化。identifier 配下の作業フォルダ・申請情報(applyInfo)を読み込み、以後のコマンドの前提状態を作る |
-| 3 | `AddAttachedFile_selectFile` | 28405 | `AddAttachedFile_selectFile` (28411) | a[2..2]（1個） | resolve | FILE | OSのファイル選択ダイアログ→選択ファイルを添付として作業フォルダへ取り込む |
-| 4 | `F3egclInitAppli_tagMapping` | 28423 | `F3egclInitAppli_tagMapping` (28429) | a[2..5]（4個） | resolve | XML | タグマッピング定義(マッピングXML)を読み込み、画面⇔XMLの対応を確立 |
-| 5 | `F3egclXMLDataAppli_addForm` | 28441 | `F3egclXMLDataAppli_addForm` (28447) | a[2..4]（3個） | resolve | XML | 申請書の様式(form)を申請データに追加 |
-| 6 | `F3egclInitAppli_initDocumentDetails` | 28464 | `F3egclInitAppli_initDocumentDetails` (28470) | a[2..2]（1個） | resolve | XML | 添付書類の明細情報を初期化 |
-| 7 | `F3egclXMLDataAppli_storeWorkXMLFile` | 28482 | `F3egclXMLDataAppli_storeWorkXMLFile` (28488) | a[2..5]（4個） | resolveJson | FILE | XML文字列を指定ファイル名で作業フォルダに保存（ReturnValuesをJSONで返す） |
-| 8 | `SetPresentationOrgInfoPartSignGroup` | 28500 | `SetPresentationOrgInfoPartSignGroup` (28506) | a[2..8]（7個） | resolve | CORE_SIGN | 提出先情報(提出先識別子/名称)を申請XMLへ書き込み。部分署名グループ版 |
-| 9 | `F3egclSignatureAppli_checkInputItem` | 28518 | `F3egclSignatureAppli_checkInputItem` (28524) | a[2..2]（1個） | resolveJson | CORE_SIGN | 署名前の入力チェック。結果をJSON文字列で返す |
-| 10 | `F3egclSignatureAppli_UrlExistsCheck` | 28536 | `F3egclSignatureAppli_UrlExistsCheck` (28542) | a[2..2]（1個） | resolve | CORE_SIGN | 添付URL(URL添付)の到達性チェック |
-| 11 | `F3egclFileManageAppli_openInBrowser` | 28554 | `F3egclFileManageAppli_openInBrowser` (28556) | a[1]（1個・uuid位置を引数に使用） | none | UI | OSの既定ブラウザでURLを開く。応答を返さない(片方向) |
-| 12 | `F3egclInitAppli_initAppliPartSignGroup` | 28565 | `F3egclInitAppli_initAppliPartSignGroup` (28571) | a[2..14]（13個） | resolve | XML | 部分署名グループ用の申請データ初期化 |
-| 13 | `F3egclXMLDataAppli_previewAttachedFile` | 28583 | `F3egclXMLDataAppli_previewAttachedFile` (28589) | a[2..2]（1個） | resolve | UI | 添付ファイルをHTML化してブラウザでプレビュー |
-| 14 | `F3egclPostProcessAppli_deleteAppliData` | 28601 | `F3egclPostProcessAppli_deleteAppliData` (28607) | a[2..3]（2個） | resolve | FILE | 申請データ(作業フォルダ/manage情報)の削除 |
-| 15 | `F3egclXMLDataAppli_SelectCertificateUI` | 28619 | `F3egclXMLDataAppli_SelectCertificateUI` (28625) | なし | resolve | CORE_SIGN | 署名用電子証明書の選択ダイアログを表示 |
-| 16 | `F3egclFileManageAppli_SaveAndStop` | 28642 | `F3egclFileManageAppli_SaveAndStop` (28648) | a[2..9]（8個） | resolve | CORE_SIGN | 署名して保存（送信はしない）。signFlag=1 で署名→sendAppliData(saveFlag) |
-| 17 | `F3egclXMLDataAppli_setXMLFormInfo` | 28660 | `F3egclXMLDataAppli_setXMLFormInfo` (28682) | a[2..5]（4個） | resolve | XML | 画面入力をXMLへ反映（F3egclSetValueForXml 等をページ側JSで実行） |
-| 18 | `F3egclXMLDataAppli_getXMLFormInfo` | 28662 | `F3egclXMLDataAppli_getXMLFormInfo` (28668) | a[2..4]（3個） | resolve | XML | XMLの値を画面用に取り出し（ページ側JSの F3egclGetValue） |
-| 19 | `F3egclFileManageAppli_SignAndSave` | 28694 | `F3egclFileManageAppli_SignAndSave` (28701) | a[2..7]（6個）+ a[8]=signInfoJson(任意) | resolve | CORE_SIGN | 署名＋保存。signInfoJson(a[8]) で署名方式(JPKI/デジタル認証)を切替 |
-| 20 | `F3egclFileManageAppli_SignAndSend` | 28713 | `F3egclFileManageAppli_SignAndSend` (28720) | a[2..8]（7個）+ a[9]=signInfoJson(任意) | resolve | CORE_SIGN | 署名＋e-Gov送信。signMaxFlag=1 でバックアップ→sendAppliData(POST)まで実行。signInfoJson は a[9] |
-| 21 | `F3egclXMLDataAppli_changeProc` | 28737 | `F3egclXMLDataAppli_changeProc` (28759) | a[2..5]（4個） | resolve | XML | 申請手続(proc)の切替 |
-| 22 | `F3egclXMLDataAppli_changeForm` | 28739 | `F3egclXMLDataAppli_changeForm` (28745) | a[2..5]（4個） | resolve | XML | 申請書様式(form)の切替 |
-| 23 | `F3egclXMLDataAppli_deleteForm` | 28771 | `F3egclXMLDataAppli_deleteForm` (28777) | a[2..7]（6個） | resolve | XML | 申請書様式の削除 |
-| 24 | `F3egclXMLDataAppli_previewOfficialDoc` | 28794 | `F3egclXMLDataAppli_previewOfficialDoc` (28816) | なし | resolve | UI | 公文書プレビュー(Koubunsho/kanbunsho.html)を開く |
-| 25 | `F3egclXMLDataAppli_previewFormConfirm` | 28796 | `F3egclXMLDataAppli_previewFormConfirm` (28802) | a[2..4]（3個） | resolve | UI | 記入済み申請書の確認プレビューを表示 |
-| 26 | `F3egclXMLDataAppli_deleteFormPartSign` | 28828 | `F3egclXMLDataAppli_deleteFormPartSign` (28834) | a[2..5]（4個） | resolve | XML | 部分署名対象様式の削除 |
-| 27 | `F3egclFileManageAppli_LoadApplication` | 28846 | `F3egclFileManageAppli_LoadApplication` (28852) | なし | resolve | FILE | 保存済み申請データの読み込み（ファイル選択ダイアログ） |
-| 28 | `F3egclFileManageAppli_SaveApplication` | 28864 | `F3egclFileManageAppli_SaveApplication` (28870) | a[2..5]（4個） | resolve | FILE | 申請データをzipとして保存（CLIENT_MANAGE_SAVED_FOLDER） |
-| 29 | `OfficialDocumentDownload_FileDownload` | 28882 | `OfficialDocumentDownload_FileDownload` (28888) | a[2..3]（2個） | resolve | HTTP | POST /application-status/getOneDoc で公文書1件をダウンロード→zip展開 |
-| 30 | `F3egclFileManageAppli_importAppliData` | 28900 | `F3egclFileManageAppli_importAppliData` (28906) | a[2..6]（5個） | resolve | FILE | 申請データ(zip)の取り込み。パスワード/種別/group/到達番号を引数に取る |
-| 31 | `F3egclPostProcessAppli_deleteWorkData` | 28918 | `F3egclPostProcessAppli_deleteWorkData` (28924) | a[2..2]（1個） | resolve | FILE | 作業データ(work配下)の削除 |
-| 32 | `F3egclXMLDataAppli_previewForm` | 28941 | `F3egclXMLDataAppli_previewForm` (28947) | a[2..6]（5個） | resolve | UI | 申請書プレビュー(HTML生成→表示) |
-| 33 | `F3egclXMLDataAppli_backProcess` | 28959 | `F3egclXMLDataAppli_backProcess` (28965) | a[2..2]（1個） | resolve | XML | 手続を1つ戻す(前処理状態へ) |
-| 34 | `F3egclUserVerificationXMLDataAppli_backProcess` | 28982 | `F3egclUserVerificationXMLDataAppli_backProcess` (28988) | なし | resolve | XML | 本人確認(利用者検証)フローの戻し処理 |
-| 35 | `F3egclFileManageAppli_SignAndSendPartSignGroup` | 29000 | `F3egclFileManageAppli_SignAndSendPartSignGroup` (29007) | a[2..11]（10個）+ a[12]=signInfoJson(任意) | resolve | CORE_SIGN | 部分署名グループ単位の署名＋送信。signInfoJson は a[12] |
-| 36 | `F3egclFileManageAppli_SaveAndStopPartSignGroup` | 29019 | `F3egclFileManageAppli_SaveAndStopPartSignGroup` (29025) | a[2..9]（8個） | resolve | CORE_SIGN | 部分署名グループ単位の署名＋保存 |
-| 37 | `F3egclXMLDataAppli_userVerificationSignAndSave` | 29037 | `F3egclXMLDataAppli_userVerificationSignAndSave` (29043) | a[2..8]（7個） | resolve | CORE_SIGN | 本人確認情報(氏名/生年月日/個人認証)を付して署名・保存 |
-| 38 | `F3egclFileManageAppli_SignAndSavePartSign` | 29060 | `F3egclFileManageAppli_SignAndSavePartSign` (29067) | a[2..11]（10個）+ a[12]=signInfoJson(任意) | resolve | CORE_SIGN | 部分署名の署名＋保存。signInfoJson は a[12] |
-| 39 | `F3egclFileManageAppli_SignAndSendPartSign` | 29079 | `F3egclFileManageAppli_SignAndSendPartSign` (29086) | a[2..11]（10個）+ a[12]=signInfoJson(任意) | resolve | CORE_SIGN | 部分署名の署名＋送信。signInfoJson は a[12] |
-| 40 | `F3egclFileManageAppli_SetAttachedFileSize` | 29098 | `F3egclFileManageAppli_SetAttachedFileSize` (29104) | a[2..3]（2個） | resolve | FILE | 添付ファイルのサイズを内部管理表へ記録 |
-| 41 | `PostOfficialDocumentDownload_FileDownload` | 29116 | `PostOfficialDocumentDownload_FileDownload` (29122) | a[2..3]（2個） | resolve | HTTP | POST /post-application-notice-contents/getOneDoc で1件取得 |
-| 42 | `F3egclFileManageAppli_AppendFeeInfoAttribute` | 29139 | `F3egclFileManageAppli_AppendFeeInfoAttribute` (29145) | a[2..6]（5個） | resolve | XML | 手数料情報属性を申請XMLへ付与 |
-| 43 | `PostOfficialDocumentDownload_FileDownloadAll` | 29157 | `PostOfficialDocumentDownload_FileDownloadAll` (29163) | a[2..4]（3個） | resolve | HTTP | POST /post-application-notice-contents/getAllDoc で一括取得 |
-| 44 | `F3egclTagConfCheck_tagConfCheckPartSignGroup` | 29175 | `F3egclTagConfCheck_tagConfCheckPartSignGroup` (29181) | a[2..2]（1個） | resolve | XML | 様式定義と入力値のタグ整合性チェック（部分署名グループ） |
-| 45 | `F3egclXMLDataAppli_deleteFormPartSignForGroupApply` | 29198 | `F3egclXMLDataAppli_deleteFormPartSignForGroupApply` (29204) | a[2..5]（4個） | resolve | XML | グループ申請用の部分署名様式削除 |
-| 46 | `F3egclFileManageAppli_SaveApplicationPartSignGroup` | 29216 | `F3egclFileManageAppli_SaveApplicationPartSignGroup` (29222) | a[2..5]（4個） | resolve | FILE | 部分署名グループ申請データの保存 |
-| 47 | `F3egclFileManageAppli_importAppliDataPartSignGroup` | 29234 | `F3egclFileManageAppli_importAppliDataPartSignGroup` (29240) | a[2..6]（5個） | resolve | FILE | 部分署名グループ申請データの取り込み |
-| 48 | `F3egclSignatureAppli_checkInputItemPartSignGroup` | 29257 | `F3egclSignatureAppli_checkInputItemPartSignGroup` (29263) | a[2..2]（1個） | resolveJson | CORE_SIGN | 部分署名グループ用の入力チェック（JSON返却） |
-| 49 | `F3egclFileManageAppli_openApplicationConfirmInfo` | 29275 | `F3egclFileManageAppli_openApplicationConfirmInfo` (29277) | a[1]（1個・uuid位置を引数に使用） | none | UI | 申請情報詳細HTMLをCLIENT_MANAGE_FOLDERへ書いてブラウザで開く。応答なし |
-| 50 | `F3egclTagConfCheck_tagConfCheck` | 29286 | `F3egclTagConfCheck_tagConfCheck` (29292) | a[2..2]（1個） | resolve | XML | 様式定義とXMLのタグ整合性チェック |
-| 51 | `F3egclXMLDataAppli_getApplyList` | 29304 | `F3egclXMLDataAppli_getApplyList` (29310) | a[2..3]（2個） | resolve | XML | 申請一覧(applyInfo)を取得して返す |
-| 52 | `SetEraParallelPeriodFlag` | 29327 | `SetEraParallelPeriodFlag` (29329) | a[1]（1個・uuid位置を引数に使用） | none | MISC | 元号並行期間フラグをstaticフィールドに設定するだけ |
-| 53 | `F3egcl_CancelDigitalAuth` | 29333 | `F3egcl_CancelDigitalAuth` (29335) | なし | none | CORE_SIGN | 進行中のデジタル認証(スマホ署名)ポーリングを中止。応答なし |
-| 54 | `AddAttachedFile_Drop` | 29341 | `AddAttachedFile_Drop` (29347) | a[2..2]（1個） | resolve | FILE | ドロップされたファイル(base64)をattachmenttempへ書き出して添付取り込み |
-| 55 | `F3egclXMLDataAppli_copyForm` | 29359 | `F3egclXMLDataAppli_copyForm` (29365) | a[2..6]（5個） | resolve | XML | 様式の複製 |
-| 56 | `F3egclXMLDataAppli_saveAppliData` | 29377 | `F3egclXMLDataAppli_saveAppliData` (29383) | a[2..5]（4個） | resolve | XML | 編集中の画面値を申請XMLへ保存（スタイルシート付与フラグ付き） |
-| 57 | `F3egclFileManageAppli_AppendFeeInfoAttributePartSignGroup` | 29395 | `F3egclFileManageAppli_AppendFeeInfoAttributePartSignGroup` (29401) | a[2..5]（4個） | resolve | XML | 手数料情報属性の付与（部分署名グループ） |
-| 58 | `F3egclFileManageAppli_AppendAttachedAttribute` | 29413 | `F3egclFileManageAppli_AppendAttachedAttribute` (29419) | a[2..5]（4個） | resolve | FILE | 添付ファイル属性(添付情報)を申請XML/構成情報へ追加 |
-| 59 | `F3egclFileManageAppli_AppendAttachedAttributePartSign` | 29431 | `F3egclFileManageAppli_AppendAttachedAttributePartSign` (29437) | a[2..3]（2個） | resolve | FILE | 添付ファイル属性の追加（部分署名） |
-| 60 | `F3egclFileManageAppli_AppendAttachedAttributePartSignGroup` | 29449 | `F3egclFileManageAppli_AppendAttachedAttributePartSignGroup` (29455) | a[2..5]（4個） | resolve | FILE | 添付ファイル属性の追加（部分署名グループ） |
-| 61 | `F3egclFileManageAppli_AppendAttachedAttributePartSignForGroupApply` | 29467 | `F3egclFileManageAppli_AppendAttachedAttributePartSignForGroupApply` (29473) | a[2..4]（3個） | resolve | FILE | 添付ファイル属性の追加（グループ申請向け部分署名） |
-| 62 | `F3egclPostProcessAppli_restoreAppliData` | 29485 | `F3egclPostProcessAppli_restoreAppliData` (29491) | a[2..2]（1個） | resolve | FILE | バックアップから申請データを復元 |
-| 63 | `OfficialDocumentDownload_FileDownloadAll` | 29503 | `OfficialDocumentDownload_FileDownloadAll` (29509) | a[2..2]（1個） | resolve | HTTP | POST /application-status/getAllDoc で公文書を一括ダウンロード |
-| 64 | `SetMinistRefInfo` | 29521 | `SetMinistRefInfo` (29527) | a[2..7]（6個） | resolve | MISC | 省庁参照情報(ministRef)を申請データへ設定 |
-| 65 | `SetPresentationOrgInfo` | 29539 | `SetPresentationOrgInfo` (29545) | a[2..8]（7個） | resolve | CORE_SIGN | 提出先情報を書き込み→saveAppliData→tagMapping再実行。署名フローの起点 |
-| 66 | `F3egclXMLDataAppli_deleteFormPartSignGroup` | 29557 | `F3egclXMLDataAppli_deleteFormPartSignGroup` (29563) | a[2..7]（6個） | resolve | XML | 部分署名グループの様式削除 |
-| 67 | `F3egclFileManageAppli_initAttachList` | 29575 | `F3egclFileManageAppli_initAttachList` (29581) | なし | resolve | FILE | 添付ファイル一覧の初期化 |
-| 68 | `F3egclReflectSuspendProcInfoClass_reflectSuspendProcInfo` | 29593 | `F3egclReflectSuspendProcInfoClass_reflectSuspendProcInfo` (29599) | a[2..4]（3個） | resolve | MISC | 中断した申請案件情報をmanageファイルへ反映 |
-| 69 | `F3egclInitAppli_restartLogin` | 29611 | `F3egclInitAppli_restartLogin` (29617) | a[2..2]（1個） | resolve | MISC | 指定URLでログイン(Keycloak)をやり直す |
-| 70 | `F3egclFileManageAppli_openElectronicPayment` | 29629 | `F3egclFileManageAppli_openElectronicPayment` (29631) | a[1]（1個・uuid位置を引数に使用） | none | UI | 電子納付(ペイメント)画面をブラウザで開く。応答なし |
-| 71 | `CloseWindow` | 29635 | `CloseWindow` (29637) | なし | none | MISC | アプリ自体を終了(Application.Quit)。応答なし |
+| #   | コマンド                                                             | case行 | clientApi メソッド (宣言行)                                                  | 引数                                       | 応答        | 分類      | 内容                                                                                                           |
+| --- | -------------------------------------------------------------------- | -----: | ---------------------------------------------------------------------------- | ------------------------------------------ | ----------- | --------- | -------------------------------------------------------------------------------------------------------------- |
+| 1   | `AddAttachedFile_DragEnter`                                          |  28364 | `AddAttachedFile_DragEnter` (28370)                                          | a[2..2]（1個）                             | resolve     | UI        | 添付欄へのドラッグ進入を通知（dragAndDropAppli.dragEnter）。画面演出のみ                                       |
+| 2   | `F3egclInitAppli_initAppli`                                          |  28382 | `F3egclInitAppli_initAppli` (28388)                                          | a[2..14]（13個）                           | resolve     | XML       | 申請データ初期化。identifier 配下の作業フォルダ・申請情報(applyInfo)を読み込み、以後のコマンドの前提状態を作る |
+| 3   | `AddAttachedFile_selectFile`                                         |  28405 | `AddAttachedFile_selectFile` (28411)                                         | a[2..2]（1個）                             | resolve     | FILE      | OSのファイル選択ダイアログ→選択ファイルを添付として作業フォルダへ取り込む                                      |
+| 4   | `F3egclInitAppli_tagMapping`                                         |  28423 | `F3egclInitAppli_tagMapping` (28429)                                         | a[2..5]（4個）                             | resolve     | XML       | タグマッピング定義(マッピングXML)を読み込み、画面⇔XMLの対応を確立                                              |
+| 5   | `F3egclXMLDataAppli_addForm`                                         |  28441 | `F3egclXMLDataAppli_addForm` (28447)                                         | a[2..4]（3個）                             | resolve     | XML       | 申請書の様式(form)を申請データに追加                                                                           |
+| 6   | `F3egclInitAppli_initDocumentDetails`                                |  28464 | `F3egclInitAppli_initDocumentDetails` (28470)                                | a[2..2]（1個）                             | resolve     | XML       | 添付書類の明細情報を初期化                                                                                     |
+| 7   | `F3egclXMLDataAppli_storeWorkXMLFile`                                |  28482 | `F3egclXMLDataAppli_storeWorkXMLFile` (28488)                                | a[2..5]（4個）                             | resolveJson | FILE      | XML文字列を指定ファイル名で作業フォルダに保存（ReturnValuesをJSONで返す）                                      |
+| 8   | `SetPresentationOrgInfoPartSignGroup`                                |  28500 | `SetPresentationOrgInfoPartSignGroup` (28506)                                | a[2..8]（7個）                             | resolve     | CORE_SIGN | 提出先情報(提出先識別子/名称)を申請XMLへ書き込み。部分署名グループ版                                           |
+| 9   | `F3egclSignatureAppli_checkInputItem`                                |  28518 | `F3egclSignatureAppli_checkInputItem` (28524)                                | a[2..2]（1個）                             | resolveJson | CORE_SIGN | 署名前の入力チェック。結果をJSON文字列で返す                                                                   |
+| 10  | `F3egclSignatureAppli_UrlExistsCheck`                                |  28536 | `F3egclSignatureAppli_UrlExistsCheck` (28542)                                | a[2..2]（1個）                             | resolve     | CORE_SIGN | 添付URL(URL添付)の到達性チェック                                                                               |
+| 11  | `F3egclFileManageAppli_openInBrowser`                                |  28554 | `F3egclFileManageAppli_openInBrowser` (28556)                                | a[1]（1個・uuid位置を引数に使用）          | none        | UI        | OSの既定ブラウザでURLを開く。応答を返さない(片方向)                                                            |
+| 12  | `F3egclInitAppli_initAppliPartSignGroup`                             |  28565 | `F3egclInitAppli_initAppliPartSignGroup` (28571)                             | a[2..14]（13個）                           | resolve     | XML       | 部分署名グループ用の申請データ初期化                                                                           |
+| 13  | `F3egclXMLDataAppli_previewAttachedFile`                             |  28583 | `F3egclXMLDataAppli_previewAttachedFile` (28589)                             | a[2..2]（1個）                             | resolve     | UI        | 添付ファイルをHTML化してブラウザでプレビュー                                                                   |
+| 14  | `F3egclPostProcessAppli_deleteAppliData`                             |  28601 | `F3egclPostProcessAppli_deleteAppliData` (28607)                             | a[2..3]（2個）                             | resolve     | FILE      | 申請データ(作業フォルダ/manage情報)の削除                                                                      |
+| 15  | `F3egclXMLDataAppli_SelectCertificateUI`                             |  28619 | `F3egclXMLDataAppli_SelectCertificateUI` (28625)                             | なし                                       | resolve     | CORE_SIGN | 署名用電子証明書の選択ダイアログを表示                                                                         |
+| 16  | `F3egclFileManageAppli_SaveAndStop`                                  |  28642 | `F3egclFileManageAppli_SaveAndStop` (28648)                                  | a[2..9]（8個）                             | resolve     | CORE_SIGN | 署名して保存（送信はしない）。signFlag=1 で署名→sendAppliData(saveFlag)                                        |
+| 17  | `F3egclXMLDataAppli_setXMLFormInfo`                                  |  28660 | `F3egclXMLDataAppli_setXMLFormInfo` (28682)                                  | a[2..5]（4個）                             | resolve     | XML       | 画面入力をXMLへ反映（F3egclSetValueForXml 等をページ側JSで実行）                                               |
+| 18  | `F3egclXMLDataAppli_getXMLFormInfo`                                  |  28662 | `F3egclXMLDataAppli_getXMLFormInfo` (28668)                                  | a[2..4]（3個）                             | resolve     | XML       | XMLの値を画面用に取り出し（ページ側JSの F3egclGetValue）                                                       |
+| 19  | `F3egclFileManageAppli_SignAndSave`                                  |  28694 | `F3egclFileManageAppli_SignAndSave` (28701)                                  | a[2..7]（6個）+ a[8]=signInfoJson(任意)    | resolve     | CORE_SIGN | 署名＋保存。signInfoJson(a[8]) で署名方式(JPKI/デジタル認証)を切替                                             |
+| 20  | `F3egclFileManageAppli_SignAndSend`                                  |  28713 | `F3egclFileManageAppli_SignAndSend` (28720)                                  | a[2..8]（7個）+ a[9]=signInfoJson(任意)    | resolve     | CORE_SIGN | 署名＋e-Gov送信。signMaxFlag=1 でバックアップ→sendAppliData(POST)まで実行。signInfoJson は a[9]                |
+| 21  | `F3egclXMLDataAppli_changeProc`                                      |  28737 | `F3egclXMLDataAppli_changeProc` (28759)                                      | a[2..5]（4個）                             | resolve     | XML       | 申請手続(proc)の切替                                                                                           |
+| 22  | `F3egclXMLDataAppli_changeForm`                                      |  28739 | `F3egclXMLDataAppli_changeForm` (28745)                                      | a[2..5]（4個）                             | resolve     | XML       | 申請書様式(form)の切替                                                                                         |
+| 23  | `F3egclXMLDataAppli_deleteForm`                                      |  28771 | `F3egclXMLDataAppli_deleteForm` (28777)                                      | a[2..7]（6個）                             | resolve     | XML       | 申請書様式の削除                                                                                               |
+| 24  | `F3egclXMLDataAppli_previewOfficialDoc`                              |  28794 | `F3egclXMLDataAppli_previewOfficialDoc` (28816)                              | なし                                       | resolve     | UI        | 公文書プレビュー(Koubunsho/kanbunsho.html)を開く                                                               |
+| 25  | `F3egclXMLDataAppli_previewFormConfirm`                              |  28796 | `F3egclXMLDataAppli_previewFormConfirm` (28802)                              | a[2..4]（3個）                             | resolve     | UI        | 記入済み申請書の確認プレビューを表示                                                                           |
+| 26  | `F3egclXMLDataAppli_deleteFormPartSign`                              |  28828 | `F3egclXMLDataAppli_deleteFormPartSign` (28834)                              | a[2..5]（4個）                             | resolve     | XML       | 部分署名対象様式の削除                                                                                         |
+| 27  | `F3egclFileManageAppli_LoadApplication`                              |  28846 | `F3egclFileManageAppli_LoadApplication` (28852)                              | なし                                       | resolve     | FILE      | 保存済み申請データの読み込み（ファイル選択ダイアログ）                                                         |
+| 28  | `F3egclFileManageAppli_SaveApplication`                              |  28864 | `F3egclFileManageAppli_SaveApplication` (28870)                              | a[2..5]（4個）                             | resolve     | FILE      | 申請データをzipとして保存（CLIENT_MANAGE_SAVED_FOLDER）                                                        |
+| 29  | `OfficialDocumentDownload_FileDownload`                              |  28882 | `OfficialDocumentDownload_FileDownload` (28888)                              | a[2..3]（2個）                             | resolve     | HTTP      | POST /application-status/getOneDoc で公文書1件をダウンロード→zip展開                                           |
+| 30  | `F3egclFileManageAppli_importAppliData`                              |  28900 | `F3egclFileManageAppli_importAppliData` (28906)                              | a[2..6]（5個）                             | resolve     | FILE      | 申請データ(zip)の取り込み。パスワード/種別/group/到達番号を引数に取る                                          |
+| 31  | `F3egclPostProcessAppli_deleteWorkData`                              |  28918 | `F3egclPostProcessAppli_deleteWorkData` (28924)                              | a[2..2]（1個）                             | resolve     | FILE      | 作業データ(work配下)の削除                                                                                     |
+| 32  | `F3egclXMLDataAppli_previewForm`                                     |  28941 | `F3egclXMLDataAppli_previewForm` (28947)                                     | a[2..6]（5個）                             | resolve     | UI        | 申請書プレビュー(HTML生成→表示)                                                                                |
+| 33  | `F3egclXMLDataAppli_backProcess`                                     |  28959 | `F3egclXMLDataAppli_backProcess` (28965)                                     | a[2..2]（1個）                             | resolve     | XML       | 手続を1つ戻す(前処理状態へ)                                                                                    |
+| 34  | `F3egclUserVerificationXMLDataAppli_backProcess`                     |  28982 | `F3egclUserVerificationXMLDataAppli_backProcess` (28988)                     | なし                                       | resolve     | XML       | 本人確認(利用者検証)フローの戻し処理                                                                           |
+| 35  | `F3egclFileManageAppli_SignAndSendPartSignGroup`                     |  29000 | `F3egclFileManageAppli_SignAndSendPartSignGroup` (29007)                     | a[2..11]（10個）+ a[12]=signInfoJson(任意) | resolve     | CORE_SIGN | 部分署名グループ単位の署名＋送信。signInfoJson は a[12]                                                        |
+| 36  | `F3egclFileManageAppli_SaveAndStopPartSignGroup`                     |  29019 | `F3egclFileManageAppli_SaveAndStopPartSignGroup` (29025)                     | a[2..9]（8個）                             | resolve     | CORE_SIGN | 部分署名グループ単位の署名＋保存                                                                               |
+| 37  | `F3egclXMLDataAppli_userVerificationSignAndSave`                     |  29037 | `F3egclXMLDataAppli_userVerificationSignAndSave` (29043)                     | a[2..8]（7個）                             | resolve     | CORE_SIGN | 本人確認情報(氏名/生年月日/個人認証)を付して署名・保存                                                         |
+| 38  | `F3egclFileManageAppli_SignAndSavePartSign`                          |  29060 | `F3egclFileManageAppli_SignAndSavePartSign` (29067)                          | a[2..11]（10個）+ a[12]=signInfoJson(任意) | resolve     | CORE_SIGN | 部分署名の署名＋保存。signInfoJson は a[12]                                                                    |
+| 39  | `F3egclFileManageAppli_SignAndSendPartSign`                          |  29079 | `F3egclFileManageAppli_SignAndSendPartSign` (29086)                          | a[2..11]（10個）+ a[12]=signInfoJson(任意) | resolve     | CORE_SIGN | 部分署名の署名＋送信。signInfoJson は a[12]                                                                    |
+| 40  | `F3egclFileManageAppli_SetAttachedFileSize`                          |  29098 | `F3egclFileManageAppli_SetAttachedFileSize` (29104)                          | a[2..3]（2個）                             | resolve     | FILE      | 添付ファイルのサイズを内部管理表へ記録                                                                         |
+| 41  | `PostOfficialDocumentDownload_FileDownload`                          |  29116 | `PostOfficialDocumentDownload_FileDownload` (29122)                          | a[2..3]（2個）                             | resolve     | HTTP      | POST /post-application-notice-contents/getOneDoc で1件取得                                                     |
+| 42  | `F3egclFileManageAppli_AppendFeeInfoAttribute`                       |  29139 | `F3egclFileManageAppli_AppendFeeInfoAttribute` (29145)                       | a[2..6]（5個）                             | resolve     | XML       | 手数料情報属性を申請XMLへ付与                                                                                  |
+| 43  | `PostOfficialDocumentDownload_FileDownloadAll`                       |  29157 | `PostOfficialDocumentDownload_FileDownloadAll` (29163)                       | a[2..4]（3個）                             | resolve     | HTTP      | POST /post-application-notice-contents/getAllDoc で一括取得                                                    |
+| 44  | `F3egclTagConfCheck_tagConfCheckPartSignGroup`                       |  29175 | `F3egclTagConfCheck_tagConfCheckPartSignGroup` (29181)                       | a[2..2]（1個）                             | resolve     | XML       | 様式定義と入力値のタグ整合性チェック（部分署名グループ）                                                       |
+| 45  | `F3egclXMLDataAppli_deleteFormPartSignForGroupApply`                 |  29198 | `F3egclXMLDataAppli_deleteFormPartSignForGroupApply` (29204)                 | a[2..5]（4個）                             | resolve     | XML       | グループ申請用の部分署名様式削除                                                                               |
+| 46  | `F3egclFileManageAppli_SaveApplicationPartSignGroup`                 |  29216 | `F3egclFileManageAppli_SaveApplicationPartSignGroup` (29222)                 | a[2..5]（4個）                             | resolve     | FILE      | 部分署名グループ申請データの保存                                                                               |
+| 47  | `F3egclFileManageAppli_importAppliDataPartSignGroup`                 |  29234 | `F3egclFileManageAppli_importAppliDataPartSignGroup` (29240)                 | a[2..6]（5個）                             | resolve     | FILE      | 部分署名グループ申請データの取り込み                                                                           |
+| 48  | `F3egclSignatureAppli_checkInputItemPartSignGroup`                   |  29257 | `F3egclSignatureAppli_checkInputItemPartSignGroup` (29263)                   | a[2..2]（1個）                             | resolveJson | CORE_SIGN | 部分署名グループ用の入力チェック（JSON返却）                                                                   |
+| 49  | `F3egclFileManageAppli_openApplicationConfirmInfo`                   |  29275 | `F3egclFileManageAppli_openApplicationConfirmInfo` (29277)                   | a[1]（1個・uuid位置を引数に使用）          | none        | UI        | 申請情報詳細HTMLをCLIENT_MANAGE_FOLDERへ書いてブラウザで開く。応答なし                                         |
+| 50  | `F3egclTagConfCheck_tagConfCheck`                                    |  29286 | `F3egclTagConfCheck_tagConfCheck` (29292)                                    | a[2..2]（1個）                             | resolve     | XML       | 様式定義とXMLのタグ整合性チェック                                                                              |
+| 51  | `F3egclXMLDataAppli_getApplyList`                                    |  29304 | `F3egclXMLDataAppli_getApplyList` (29310)                                    | a[2..3]（2個）                             | resolve     | XML       | 申請一覧(applyInfo)を取得して返す                                                                              |
+| 52  | `SetEraParallelPeriodFlag`                                           |  29327 | `SetEraParallelPeriodFlag` (29329)                                           | a[1]（1個・uuid位置を引数に使用）          | none        | MISC      | 元号並行期間フラグをstaticフィールドに設定するだけ                                                             |
+| 53  | `F3egcl_CancelDigitalAuth`                                           |  29333 | `F3egcl_CancelDigitalAuth` (29335)                                           | なし                                       | none        | CORE_SIGN | 進行中のデジタル認証(スマホ署名)ポーリングを中止。応答なし                                                     |
+| 54  | `AddAttachedFile_Drop`                                               |  29341 | `AddAttachedFile_Drop` (29347)                                               | a[2..2]（1個）                             | resolve     | FILE      | ドロップされたファイル(base64)をattachmenttempへ書き出して添付取り込み                                         |
+| 55  | `F3egclXMLDataAppli_copyForm`                                        |  29359 | `F3egclXMLDataAppli_copyForm` (29365)                                        | a[2..6]（5個）                             | resolve     | XML       | 様式の複製                                                                                                     |
+| 56  | `F3egclXMLDataAppli_saveAppliData`                                   |  29377 | `F3egclXMLDataAppli_saveAppliData` (29383)                                   | a[2..5]（4個）                             | resolve     | XML       | 編集中の画面値を申請XMLへ保存（スタイルシート付与フラグ付き）                                                  |
+| 57  | `F3egclFileManageAppli_AppendFeeInfoAttributePartSignGroup`          |  29395 | `F3egclFileManageAppli_AppendFeeInfoAttributePartSignGroup` (29401)          | a[2..5]（4個）                             | resolve     | XML       | 手数料情報属性の付与（部分署名グループ）                                                                       |
+| 58  | `F3egclFileManageAppli_AppendAttachedAttribute`                      |  29413 | `F3egclFileManageAppli_AppendAttachedAttribute` (29419)                      | a[2..5]（4個）                             | resolve     | FILE      | 添付ファイル属性(添付情報)を申請XML/構成情報へ追加                                                             |
+| 59  | `F3egclFileManageAppli_AppendAttachedAttributePartSign`              |  29431 | `F3egclFileManageAppli_AppendAttachedAttributePartSign` (29437)              | a[2..3]（2個）                             | resolve     | FILE      | 添付ファイル属性の追加（部分署名）                                                                             |
+| 60  | `F3egclFileManageAppli_AppendAttachedAttributePartSignGroup`         |  29449 | `F3egclFileManageAppli_AppendAttachedAttributePartSignGroup` (29455)         | a[2..5]（4個）                             | resolve     | FILE      | 添付ファイル属性の追加（部分署名グループ）                                                                     |
+| 61  | `F3egclFileManageAppli_AppendAttachedAttributePartSignForGroupApply` |  29467 | `F3egclFileManageAppli_AppendAttachedAttributePartSignForGroupApply` (29473) | a[2..4]（3個）                             | resolve     | FILE      | 添付ファイル属性の追加（グループ申請向け部分署名）                                                             |
+| 62  | `F3egclPostProcessAppli_restoreAppliData`                            |  29485 | `F3egclPostProcessAppli_restoreAppliData` (29491)                            | a[2..2]（1個）                             | resolve     | FILE      | バックアップから申請データを復元                                                                               |
+| 63  | `OfficialDocumentDownload_FileDownloadAll`                           |  29503 | `OfficialDocumentDownload_FileDownloadAll` (29509)                           | a[2..2]（1個）                             | resolve     | HTTP      | POST /application-status/getAllDoc で公文書を一括ダウンロード                                                  |
+| 64  | `SetMinistRefInfo`                                                   |  29521 | `SetMinistRefInfo` (29527)                                                   | a[2..7]（6個）                             | resolve     | MISC      | 省庁参照情報(ministRef)を申請データへ設定                                                                      |
+| 65  | `SetPresentationOrgInfo`                                             |  29539 | `SetPresentationOrgInfo` (29545)                                             | a[2..8]（7個）                             | resolve     | CORE_SIGN | 提出先情報を書き込み→saveAppliData→tagMapping再実行。署名フローの起点                                          |
+| 66  | `F3egclXMLDataAppli_deleteFormPartSignGroup`                         |  29557 | `F3egclXMLDataAppli_deleteFormPartSignGroup` (29563)                         | a[2..7]（6個）                             | resolve     | XML       | 部分署名グループの様式削除                                                                                     |
+| 67  | `F3egclFileManageAppli_initAttachList`                               |  29575 | `F3egclFileManageAppli_initAttachList` (29581)                               | なし                                       | resolve     | FILE      | 添付ファイル一覧の初期化                                                                                       |
+| 68  | `F3egclReflectSuspendProcInfoClass_reflectSuspendProcInfo`           |  29593 | `F3egclReflectSuspendProcInfoClass_reflectSuspendProcInfo` (29599)           | a[2..4]（3個）                             | resolve     | MISC      | 中断した申請案件情報をmanageファイルへ反映                                                                     |
+| 69  | `F3egclInitAppli_restartLogin`                                       |  29611 | `F3egclInitAppli_restartLogin` (29617)                                       | a[2..2]（1個）                             | resolve     | MISC      | 指定URLでログイン(Keycloak)をやり直す                                                                          |
+| 70  | `F3egclFileManageAppli_openElectronicPayment`                        |  29629 | `F3egclFileManageAppli_openElectronicPayment` (29631)                        | a[1]（1個・uuid位置を引数に使用）          | none        | UI        | 電子納付(ペイメント)画面をブラウザで開く。応答なし                                                             |
+| 71  | `CloseWindow`                                                        |  29635 | `CloseWindow` (29637)                                                        | なし                                       | none        | MISC      | アプリ自体を終了(Application.Quit)。応答なし                                                                   |
 
 計 **71** 件。
 
 ## 3. バケット別集計
 
-| バケット | 件数 | 意味 |
-|---|---:|---|
-| CORE_SIGN | 15 | 署名・提出・認証に必須。実装必須 |
-| XML | 22 | 申請XML(構成情報/申請書/様式)の操作。ファイルI/OだがXML構造が本質 |
-| FILE | 17 | 仮想ファイルシステム（work/manage 配下、添付、zip入出力） |
-| HTTP | 4 | e-Govへの直接HTTP（公文書・通知のダウンロード） |
-| UI | 8 | ダイアログ/プレビュー。スタブ化可能 |
-| MISC | 5 | フラグ設定・終了・ログイン再実行など |
-| **合計** | **71** | |
+| バケット  |   件数 | 意味                                                              |
+| --------- | -----: | ----------------------------------------------------------------- |
+| CORE_SIGN |     15 | 署名・提出・認証に必須。実装必須                                  |
+| XML       |     22 | 申請XML(構成情報/申請書/様式)の操作。ファイルI/OだがXML構造が本質 |
+| FILE      |     17 | 仮想ファイルシステム（work/manage 配下、添付、zip入出力）         |
+| HTTP      |      4 | e-Govへの直接HTTP（公文書・通知のダウンロード）                   |
+| UI        |      8 | ダイアログ/プレビュー。スタブ化可能                               |
+| MISC      |      5 | フラグ設定・終了・ログイン再実行など                              |
+| **合計**  | **71** |                                                                   |
 
 ### CORE_SIGN（15件）の内訳
 
@@ -295,13 +297,13 @@
 
 戻り値 `ReturnValues.procStatus` がそのまま JS の `resolve`（数値）になる。例外コード対応:
 
-| 例外コード | procStatus | 意味 |
-|---|---:|---|
-| 4101 | 2 | 様式エラー（`F3EGFORMNG`） |
-| 5018 | 1 | WAFブロック（`F3EWAFNG:<support id>`） |
-| 5019 | 1 | その他応答不正（`F3EGOTHERRESPONSE`） |
-| 6000 | 1 | プロキシ認証キャンセル（`F3EGAUTHCN`） |
-| その他 | -1 | FATAL |
+| 例外コード | procStatus | 意味                                   |
+| ---------- | ---------: | -------------------------------------- |
+| 4101       |          2 | 様式エラー（`F3EGFORMNG`）             |
+| 5018       |          1 | WAFブロック（`F3EWAFNG:<support id>`） |
+| 5019       |          1 | その他応答不正（`F3EGOTHERRESPONSE`）  |
+| 6000       |          1 | プロキシ認証キャンセル（`F3EGAUTHCN`） |
+| その他     |         -1 | FATAL                                  |
 
 ### 4.4 `sendAppliDataFile`（`78843`）— 送信本体
 
@@ -377,17 +379,17 @@
 
 ### 4.7 HTTPエンドポイント一覧（すべて `ProxyUtil.getHttpWebRequest` 経由）
 
-| 用途 | 実装 | 行 | HTTP | パス（`/recept` 配下） | Content-Type | ボディ |
-|---|---|---:|---|---|---|---|
-| 申請データ分割送信 | `SignatureAppli.SendHttpRequest` | 78948 | POST | `/application-form-entry/AppDataReceive` | `application/octet-stream` | zip断片（生バイト） |
-| 申請データ取込(通常) | `FileManageAppli.SendHttpRequest` | 72597 | POST | `/application-form-import/load` | `application/x-www-form-urlencoded` | `procType, procIdConfListStr, confFileVerListStr, formFileVerListStr, readModeFlag, arriveId, noticeSubId, groupId, ministRefTypeExeFlagStr, attachedProcListStr` |
-| 申請データ取込(部分署名G) | `SendHttpRequestPartSignGroup` | 72751 | POST | `/application-form-import/load-partsign-group` | 同上 | 上記＋`groupProcIdListStr` |
-| 公文書1件 | `ClientApi.SendHttpRequest` | 16545 | POST | `/application-status/getOneDoc` | 同上 | `arriveId=..&noticeSubId=..` |
-| 公文書一括 | `ClientApi.SendHttpRequestAll` | 16499 | POST | `/application-status/getAllDoc` | 同上 | `arriveId=..` |
-| 通知1件 | `ClientApi.SendHttpRequest` | 16545 | POST | `/post-application-notice-contents/getOneDoc` | 同上 | `ministryMessageId=..&postId=..` |
-| 通知一括 | `PostSendHttpRequestAll` | 16453 | POST | `/post-application-notice-contents/getAllDoc` | 同上 | `ministryMessageId=..&postGroupId=..&ministryId=..` |
-| デジタル認証 開始 | `StartDigitalAuth` | 69343 | POST | `/digital-auth/start-sign` | `application/x-www-form-urlencoded` | `data=<Base64(C14N(SignedInfo))>&targetProcId=..&dispProcName=..` |
-| デジタル認証 ポーリング | `CreatePollRequest` | 69640 | GET | `/digital-auth/poll?signTransactionId=..` | — | — |
+| 用途                      | 実装                              |    行 | HTTP | パス（`/recept` 配下）                         | Content-Type                        | ボディ                                                                                                                                                            |
+| ------------------------- | --------------------------------- | ----: | ---- | ---------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 申請データ分割送信        | `SignatureAppli.SendHttpRequest`  | 78948 | POST | `/application-form-entry/AppDataReceive`       | `application/octet-stream`          | zip断片（生バイト）                                                                                                                                               |
+| 申請データ取込(通常)      | `FileManageAppli.SendHttpRequest` | 72597 | POST | `/application-form-import/load`                | `application/x-www-form-urlencoded` | `procType, procIdConfListStr, confFileVerListStr, formFileVerListStr, readModeFlag, arriveId, noticeSubId, groupId, ministRefTypeExeFlagStr, attachedProcListStr` |
+| 申請データ取込(部分署名G) | `SendHttpRequestPartSignGroup`    | 72751 | POST | `/application-form-import/load-partsign-group` | 同上                                | 上記＋`groupProcIdListStr`                                                                                                                                        |
+| 公文書1件                 | `ClientApi.SendHttpRequest`       | 16545 | POST | `/application-status/getOneDoc`                | 同上                                | `arriveId=..&noticeSubId=..`                                                                                                                                      |
+| 公文書一括                | `ClientApi.SendHttpRequestAll`    | 16499 | POST | `/application-status/getAllDoc`                | 同上                                | `arriveId=..`                                                                                                                                                     |
+| 通知1件                   | `ClientApi.SendHttpRequest`       | 16545 | POST | `/post-application-notice-contents/getOneDoc`  | 同上                                | `ministryMessageId=..&postId=..`                                                                                                                                  |
+| 通知一括                  | `PostSendHttpRequestAll`          | 16453 | POST | `/post-application-notice-contents/getAllDoc`  | 同上                                | `ministryMessageId=..&postGroupId=..&ministryId=..`                                                                                                               |
+| デジタル認証 開始         | `StartDigitalAuth`                | 69343 | POST | `/digital-auth/start-sign`                     | `application/x-www-form-urlencoded` | `data=<Base64(C14N(SignedInfo))>&targetProcId=..&dispProcName=..`                                                                                                 |
+| デジタル認証 ポーリング   | `CreatePollRequest`               | 69640 | GET  | `/digital-auth/poll?signTransactionId=..`      | —                                   | —                                                                                                                                                                 |
 
 ダウンロード系レスポンスは zip。`unzip()`（`16565`）が `tmp.zip` に落として展開し、
 保存名は `{arriveId|ministryMessageId}_yyyyMMddHHmmss.zip`。
@@ -442,11 +444,11 @@ XMLDSig パラメータ（両系統で同一）:
 
 Reference 一覧:
 
-| 対象 | URI | DigestMethod |
-|---|---|---|
-| 構成情報 | `"#" + UrlEncode("構成情報")` | SHA-256 + C14N transform |
-| 申請書ファイル（`申請書ファイル名称` の各値） | ファイル名そのまま（`69256`） | SHA-256 |
-| 添付書類（`添付種別=添付` かつ `提出情報=1`） | `UrlEncode(ファイル名)`（`69284`） | SHA-256 |
+| 対象                                          | URI                                | DigestMethod             |
+| --------------------------------------------- | ---------------------------------- | ------------------------ |
+| 構成情報                                      | `"#" + UrlEncode("構成情報")`      | SHA-256 + C14N transform |
+| 申請書ファイル（`申請書ファイル名称` の各値） | ファイル名そのまま（`69256`）      | SHA-256                  |
+| 添付書類（`添付種別=添付` かつ `提出情報=1`） | `UrlEncode(ファイル名)`（`69284`） | SHA-256                  |
 
 添付ファイル名の禁止文字（`69269`）: `\ % < > { } [ ] 半角空白 全角空白 # ^ ?`
 

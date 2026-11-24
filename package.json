@@ -11,7 +11,8 @@
     "test": "node --test test/",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "parity": "node scripts/parity-csharp.mjs && node scripts/parity-sign.mjs"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.9.12",

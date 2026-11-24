@@ -5,6 +5,10 @@ import prettier from 'eslint-config-prettier';
 export default [
   { ignores: ['node_modules/', 'dist/', 'build/'] },
   {
+    files: ['scripts/**/*.mjs', 'test/**/*.mjs', 'test/**/*.ts'],
+    languageOptions: { globals: { Buffer: 'readonly', process: 'readonly' } },
+  },
+  {
     files: ['test/**/*.mjs', 'test/**/*.ts'],
     languageOptions: {
       globals: {

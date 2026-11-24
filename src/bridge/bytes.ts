@@ -15,14 +15,15 @@ export function base64ToBytes(b64: string): Uint8Array {
   return out;
 }
 
-// .NET WebUtility.UrlEncode 相当。
-// 非予約文字 [A-Za-z0-9-._~] 以外はすべて %XX（大文字16進）、スペースは '+'。
+// .NET WebUtility.UrlEncode 相当（C# 実装と一致することを parity-csharp.mjs で検証済み）。
+// 非予約文字 [A-Za-z0-9-._] のみ素通し。'~' は %7E にエンコードされる（.NET の挙動）。
+// スペースは '+'。それ以外は UTF-8 バイトごとに %XX（大文字16進）。
 export function webUtilityUrlEncode(s: string): string {
   const bytes = new TextEncoder().encode(s);
   let out = '';
   for (const b of bytes) {
     const c = String.fromCharCode(b);
-    if (/[A-Za-z0-9\-._~]/.test(c)) out += c;
+    if (/[A-Za-z0-9\-._]/.test(c)) out += c;
     else if (b === 0x20) out += '+';
     else out += '%' + b.toString(16).toUpperCase().padStart(2, '0');
   }

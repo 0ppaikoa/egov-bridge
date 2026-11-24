@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "e-Gov 電子申請ブリッジ（非公式）",
+  "short_name": "e-Gov bridge",
+  "version": "0.1.0",
+  "description": "e-Gov電子申請をブラウザから直接操作するための実験的ブリッジ。デジタル庁とは無関係の非公式ツール。",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://shinsei.e-gov.go.jp/*",
+    "https://shinsei.kn.e-gov.go.jp/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://shinsei.e-gov.go.jp/*",
+        "https://shinsei.kn.e-gov.go.jp/*"
+      ],
+      "js": ["src/shim.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://shinsei.e-gov.go.jp/*",
+        "https://shinsei.kn.e-gov.go.jp/*"
+      ],
+      "js": ["src/bridge.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

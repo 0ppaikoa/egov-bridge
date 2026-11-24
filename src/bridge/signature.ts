@@ -11,7 +11,13 @@ import forge from 'node-forge';
 import { DOMParser } from '@xmldom/xmldom';
 import { c14n } from '../c14n.ts';
 import { bytesToBase64, base64ToBytes, sha256, webUtilityUrlEncode } from './bytes.ts';
-import { parseXml, elementsByTag, firstElementByTag, textContent, serializeXml } from './xmlutil.ts';
+import {
+  parseXml,
+  elementsByTag,
+  firstElementByTag,
+  textContent,
+  serializeXml,
+} from './xmlutil.ts';
 
 export interface DigestRef {
   uri: string;
@@ -78,7 +84,7 @@ export async function collectReferences(
   const names = elementsByTag(doc, '添付書類ファイル名称');
   const kinds = elementsByTag(doc, '添付種別');
   const submits = elementsByTag(doc, '提出情報');
-  const invalidChars = /[\\%<>{}[\]\s　#^?]/; // ネイティブ実装の禁止文字集合
+  const invalidChars = /[\\%<>{}[\]\s\u3000#^?]/; // ネイティブ実装の禁止文字集合
   for (let i = 0; i < names.length; i++) {
     const kind = textContent(kinds[i]);
     const submit = textContent(submits[i]);
@@ -214,13 +220,19 @@ export async function verifySignatureXml(
   const doc = parseXml(xml);
   const sig = firstElementByTag(doc, 'Signature');
   if (!sig) {
-    return { ok: false, checks: [{ name: 'signature-present', ok: false, detail: '署名情報がありません' }] };
+    return {
+      ok: false,
+      checks: [{ name: 'signature-present', ok: false, detail: '署名情報がありません' }],
+    };
   }
   const signedInfo = firstElementByTag(sig as unknown as Element, 'SignedInfo');
   const sigValueEl = firstElementByTag(sig as unknown as Element, 'SignatureValue');
   const certEl = firstElementByTag(sig as unknown as Element, 'X509Certificate');
   if (!signedInfo || !sigValueEl || !certEl) {
-    return { ok: false, checks: [{ name: 'signature-structure', ok: false, detail: '必須要素が欠けています' }] };
+    return {
+      ok: false,
+      checks: [{ name: 'signature-structure', ok: false, detail: '必須要素が欠けています' }],
+    };
   }
 
   // SignedInfo の C14N バイト列
@@ -233,7 +245,9 @@ export async function verifySignatureXml(
     const cert = forge.pki.certificateFromAsn1(asn1);
     const md = forge.md.sha256.create();
     md.update(forge.util.binary.raw.encode(data));
-    const sigBytes = forge.util.binary.raw.encode(base64ToBytes(textContent(sigValueEl).replace(/\s+/g, '')));
+    const sigBytes = forge.util.binary.raw.encode(
+      base64ToBytes(textContent(sigValueEl).replace(/\s+/g, '')),
+    );
     const ok = (cert.publicKey as forge.pki.rsa.PublicKey).verify(md.digest().getBytes(), sigBytes);
     checks.push({ name: 'signature-value', ok });
   } catch (e) {

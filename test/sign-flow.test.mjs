@@ -40,7 +40,9 @@ test('SignAndSend: pre-send → 署名 → 本送信 が順序通りに実行さ
   cert.setSubject(attrs);
   cert.setIssuer(attrs);
   cert.sign(keys.privateKey, forge.md.sha256.create());
-  const certB64 = forge.util.encode64(forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes());
+  const certB64 = forge.util.encode64(
+    forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes(),
+  );
 
   const calls = [];
   let signedDataB64 = null;
@@ -86,17 +88,31 @@ test('SignAndSend: pre-send → 署名 → 本送信 が順序通りに実行さ
     throw new Error('unexpected fetch: ' + u);
   };
 
-  const result = await cmdSignAndSend(['test-id', '20251', 'kousei.xml', '1', 'false', 'false', '20261124120000']);
+  const result = await cmdSignAndSend([
+    'test-id',
+    '20251',
+    'kousei.xml',
+    '1',
+    'false',
+    'false',
+    '20261124120000',
+  ]);
   assert.equal(result, 0);
 
   // fetch の呼び出し順序を検証
   const kinds = calls.map((c) => {
-    if (c.url.includes('AppDataReceive')) return `AppDataReceive:preSendFlag=${c.headers['preSendFlag']}`;
+    if (c.url.includes('AppDataReceive'))
+      return `AppDataReceive:preSendFlag=${c.headers['preSendFlag']}`;
     if (c.url.includes('start-sign')) return 'start-sign';
     if (c.url.includes('poll')) return 'poll';
     return 'other';
   });
-  assert.deepEqual(kinds, ['AppDataReceive:preSendFlag=1', 'start-sign', 'poll', 'AppDataReceive:preSendFlag=0']);
+  assert.deepEqual(kinds, [
+    'AppDataReceive:preSendFlag=1',
+    'start-sign',
+    'poll',
+    'AppDataReceive:preSendFlag=0',
+  ]);
 
   // 署名済みXMLが保存され、検証に通ること
   const signedXml = vfs.readText('/work/test-id/20251/kousei.xml');

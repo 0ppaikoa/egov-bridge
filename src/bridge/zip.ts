@@ -15,7 +15,10 @@ export function unzipToMap(bytes: Uint8Array): Map<string, Uint8Array> {
 }
 
 /** 相対パス -> bytes の Map から ZIP を作る。paths must use forward slashes and live under rootPrefix (e.g. "{identifier}"). */
-export function zipFromEntries(entries: Map<string, Uint8Array>, options?: { level?: 0 | 1 | 6 | 9 }): Uint8Array {
+export function zipFromEntries(
+  entries: Map<string, Uint8Array>,
+  options?: { level?: 0 | 1 | 6 | 9 },
+): Uint8Array {
   const files: Record<string, Uint8Array> = {};
   for (const [name, data] of entries) {
     files[name] = data;

@@ -17,7 +17,10 @@ export interface SignSendOptions {
 }
 
 function parseProcIds(list: string): string[] {
-  return list.split(':::').map((s) => s.trim()).filter(Boolean);
+  return list
+    .split(':::')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 /**
@@ -40,7 +43,9 @@ export async function signAndSendCore(
     saveFlag: opts.saveFlag,
   });
   if (!pre.ok) {
-    throw new Error(`pre-send に失敗しました: ${pre.code} ${'supportId' in pre ? pre.supportId : pre.detail}`);
+    throw new Error(
+      `pre-send に失敗しました: ${pre.code} ${'supportId' in pre ? pre.supportId : pre.detail}`,
+    );
   }
 
   // 2) 署名（signFlag=1 のときのみ）
@@ -57,22 +62,34 @@ export async function signAndSendCore(
     saveFlag: opts.saveFlag,
   });
   if (!main.ok) {
-    throw new Error(`送信に失敗しました: ${main.code} ${'supportId' in main ? main.supportId : main.detail}`);
+    throw new Error(
+      `送信に失敗しました: ${main.code} ${'supportId' in main ? main.supportId : main.detail}`,
+    );
   }
   return 0;
 }
 
 export async function cmdSignAndSend(args: string[]): Promise<number> {
   // identifier, procIdListStr, fabFormFileName, signFlag, signMaxFlag, addSignFlag, signatureId[, signInfoJson]
-  const [identifier, procIdListStr, fabFormFileName, signFlag, signMaxFlag, _addSignFlag, signatureId, signInfoJson] =
-    args;
+  const [
+    identifier,
+    procIdListStr,
+    fabFormFileName,
+    signFlag,
+    signMaxFlag,
+    _addSignFlag,
+    signatureId,
+    signInfoJson,
+  ] = args;
   if (!identifier) throw new Error('identifier がありません');
   if (!procIdListStr) throw new Error('procIdList がありません');
   if (!fabFormFileName) throw new Error('fabFormFileName がありません');
   const useBackup = String(signMaxFlag).toLowerCase() === 'true';
   if (useBackup) {
     // ネイティブではバックアップ→無署名送信だが、現状バックアップ機構がないため明示的に拒否する
-    throw new Error('signMaxFlag=true（申請データのバックアップ送信）は未実装です。バックアップが必要な場合はアプリを使用してください');
+    throw new Error(
+      'signMaxFlag=true（申請データのバックアップ送信）は未実装です。バックアップが必要な場合はアプリを使用してください',
+    );
   }
   return signAndSendCore(identifier, procIdListStr, fabFormFileName, signFlag, {
     signatureId,
@@ -83,7 +100,15 @@ export async function cmdSignAndSend(args: string[]): Promise<number> {
 
 export async function cmdSignAndSave(args: string[]): Promise<number> {
   // identifier, procIdListStr, fabFormFileName, signFlag, addSignFlag, signatureId[, signInfoJson]
-  const [identifier, procIdListStr, fabFormFileName, signFlag, _addSignFlag, signatureId, signInfoJson] = args;
+  const [
+    identifier,
+    procIdListStr,
+    fabFormFileName,
+    signFlag,
+    _addSignFlag,
+    signatureId,
+    signInfoJson,
+  ] = args;
   if (!identifier) throw new Error('identifier がありません');
   if (!procIdListStr) throw new Error('procIdList がありません');
   if (!fabFormFileName) throw new Error('fabFormFileName がありません');

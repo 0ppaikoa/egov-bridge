@@ -32,7 +32,9 @@ export async function signProcWithDigitalAuth(
 
   if (!openAuthorizationUrl(start.authorization_url)) {
     // ポップアップが止められた場合は URL を例外メッセージに含めて表示させる
-    throw new Error(`ポップアップがブロックされました。次のURLをブラウザで開いて署名してください: ${start.authorization_url}`);
+    throw new Error(
+      `ポップアップがブロックされました。次のURLをブラウザで開いて署名してください: ${start.authorization_url}`,
+    );
   }
 
   const waitMs = Number.parseInt(start.wait_time_ms ?? '60000', 10) || 60000;

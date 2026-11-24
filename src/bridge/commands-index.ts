@@ -10,6 +10,19 @@ import {
   cmdInitAttachList,
   cmdOpenInBrowser,
 } from './commands-core.ts';
+import {
+  cmdAddAttachedFileDragEnter,
+  cmdAddAttachedFileDrop,
+  cmdAppendAttachedAttribute,
+  cmdSetAttachedFileSize,
+} from './commands-attach.ts';
+import {
+  cmdSetMinistRefInfo,
+  cmdSetPresentationOrgInfo,
+  cmdRestartLogin,
+  cmdSelectCertificateUI,
+  cmdSaveAppliDataPlaceholder,
+} from './commands-misc.ts';
 
 function notImpl(name: string): CommandEntry['fn'] {
   return () => {
@@ -28,7 +41,7 @@ function closeWindow(): void {
 }
 
 export const COMMANDS: Record<string, CommandEntry> = {
-  AddAttachedFile_DragEnter: { oneWay: false, fn: notImpl('AddAttachedFile_DragEnter') },
+  AddAttachedFile_DragEnter: { oneWay: false, fn: cmdAddAttachedFileDragEnter },
   F3egclInitAppli_initAppli: { oneWay: false, fn: notImpl('F3egclInitAppli_initAppli') },
   AddAttachedFile_selectFile: { oneWay: false, fn: notImpl('AddAttachedFile_selectFile') },
   F3egclInitAppli_tagMapping: { oneWay: false, fn: notImpl('F3egclInitAppli_tagMapping') },
@@ -71,7 +84,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclXMLDataAppli_SelectCertificateUI: {
     oneWay: false,
-    fn: notImpl('F3egclXMLDataAppli_SelectCertificateUI'),
+    fn: cmdSelectCertificateUI,
   },
   F3egclFileManageAppli_SaveAndStop: {
     oneWay: false,
@@ -156,7 +169,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclFileManageAppli_SetAttachedFileSize: {
     oneWay: false,
-    fn: notImpl('F3egclFileManageAppli_SetAttachedFileSize'),
+    fn: cmdSetAttachedFileSize,
   },
   PostOfficialDocumentDownload_FileDownload: {
     oneWay: false,
@@ -204,11 +217,11 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   SetEraParallelPeriodFlag: { oneWay: true, fn: setEraParallelPeriodFlag },
   F3egcl_CancelDigitalAuth: { oneWay: true, fn: cancelDigitalAuth },
-  AddAttachedFile_Drop: { oneWay: false, fn: notImpl('AddAttachedFile_Drop') },
+  AddAttachedFile_Drop: { oneWay: false, fn: cmdAddAttachedFileDrop },
   F3egclXMLDataAppli_copyForm: { oneWay: false, fn: notImpl('F3egclXMLDataAppli_copyForm') },
   F3egclXMLDataAppli_saveAppliData: {
     oneWay: false,
-    fn: notImpl('F3egclXMLDataAppli_saveAppliData'),
+    fn: cmdSaveAppliDataPlaceholder,
   },
   F3egclFileManageAppli_AppendFeeInfoAttributePartSignGroup: {
     oneWay: false,
@@ -216,7 +229,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclFileManageAppli_AppendAttachedAttribute: {
     oneWay: false,
-    fn: notImpl('F3egclFileManageAppli_AppendAttachedAttribute'),
+    fn: cmdAppendAttachedAttribute,
   },
   F3egclFileManageAppli_AppendAttachedAttributePartSign: {
     oneWay: false,
@@ -238,8 +251,8 @@ export const COMMANDS: Record<string, CommandEntry> = {
     oneWay: false,
     fn: notImpl('OfficialDocumentDownload_FileDownloadAll'),
   },
-  SetMinistRefInfo: { oneWay: false, fn: notImpl('SetMinistRefInfo') },
-  SetPresentationOrgInfo: { oneWay: false, fn: notImpl('SetPresentationOrgInfo') },
+  SetMinistRefInfo: { oneWay: false, fn: cmdSetMinistRefInfo },
+  SetPresentationOrgInfo: { oneWay: false, fn: cmdSetPresentationOrgInfo },
   F3egclXMLDataAppli_deleteFormPartSignGroup: {
     oneWay: false,
     fn: notImpl('F3egclXMLDataAppli_deleteFormPartSignGroup'),
@@ -252,7 +265,7 @@ export const COMMANDS: Record<string, CommandEntry> = {
     oneWay: false,
     fn: notImpl('F3egclReflectSuspendProcInfoClass_reflectSuspendProcInfo'),
   },
-  F3egclInitAppli_restartLogin: { oneWay: false, fn: notImpl('F3egclInitAppli_restartLogin') },
+  F3egclInitAppli_restartLogin: { oneWay: false, fn: cmdRestartLogin },
   F3egclFileManageAppli_openElectronicPayment: {
     oneWay: true,
     fn: notImpl('F3egclFileManageAppli_openElectronicPayment'),

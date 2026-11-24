@@ -57,7 +57,10 @@ export async function postBinary(
   return readResponse(res);
 }
 
-export async function get(path: string, extraHeaders: Record<string, string> = {}): Promise<HttpResponse> {
+export async function get(
+  path: string,
+  extraHeaders: Record<string, string> = {},
+): Promise<HttpResponse> {
   const res = await fetch(path, {
     method: 'GET',
     credentials: 'same-origin',
@@ -72,7 +75,7 @@ export async function get(path: string, extraHeaders: Record<string, string> = {
 
 async function readResponse(res: Response): Promise<HttpResponse> {
   const buf = new Uint8Array(await res.arrayBuffer());
-  let text = '';
+  let text: string;
   try {
     text = new TextDecoder('utf-8').decode(buf);
   } catch {

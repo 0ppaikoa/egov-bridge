@@ -40,7 +40,11 @@ export async function startDigitalAuth(
   } catch {
     throw new Error('start-sign の応答が JSON ではありません');
   }
-  if (!json || typeof json.authorization_url !== 'string' || typeof json.sign_transaction_id !== 'string') {
+  if (
+    !json ||
+    typeof json.authorization_url !== 'string' ||
+    typeof json.sign_transaction_id !== 'string'
+  ) {
     throw new Error('start-sign の応答に authorization_url / sign_transaction_id がありません');
   }
   return {
@@ -75,10 +79,17 @@ export async function pollDigitalAuthOnce(signTransactionId: string): Promise<Po
     return { status: 'pending' };
   }
   if (json.IsError === true) {
-    return { status: 'error', error: typeof json.Certificate === 'string' ? json.Certificate : '署名に失敗しました' };
+    return {
+      status: 'error',
+      error: typeof json.Certificate === 'string' ? json.Certificate : '署名に失敗しました',
+    };
   }
   if (typeof json.Signature === 'string' && json.Signature) {
-    return { status: 'done', signature: json.Signature, certificate: String(json.Certificate ?? '') };
+    return {
+      status: 'done',
+      signature: json.Signature,
+      certificate: String(json.Certificate ?? ''),
+    };
   }
   return { status: 'pending' };
 }
@@ -91,7 +102,10 @@ export interface PollOptions {
 }
 
 /** 完了までポーリング。キャンセルは state.digitalAuth.cancelRequested を見る */
-export async function waitForSignature(signTransactionId: string, opts: PollOptions): Promise<PollResult> {
+export async function waitForSignature(
+  signTransactionId: string,
+  opts: PollOptions,
+): Promise<PollResult> {
   const da = state.digitalAuth;
   da.polling = true;
   da.cancelRequested = false;
@@ -104,7 +118,10 @@ export async function waitForSignature(signTransactionId: string, opts: PollOpti
       if (result.status !== 'pending') return result;
       await sleep(opts.pollIntervalMs);
     }
-    return { status: 'error', error: 'タイムアウトしました（スマートフォンでの署名が完了していません）' };
+    return {
+      status: 'error',
+      error: 'タイムアウトしました（スマートフォンでの署名が完了していません）',
+    };
   } finally {
     da.polling = false;
     da.signTransactionId = null;

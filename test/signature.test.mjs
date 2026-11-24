@@ -4,9 +4,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import forge from 'node-forge';
-import { prepareSigning, assembleSignedXml, verifySignatureXml, collectReferences, buildSignedInfoXml } from '../src/bridge/signature.ts';
-import { c14n } from '../src/c14n.ts';
-import { DOMParser } from '@xmldom/xmldom';
+import {
+  prepareSigning,
+  assembleSignedXml,
+  verifySignatureXml,
+  collectReferences,
+  buildSignedInfoXml,
+} from '../src/bridge/signature.ts';
 
 const KOUSEI = `<?xml version="1.0" encoding="UTF-8"?>
 <DataRoot>
@@ -85,7 +89,9 @@ test('改ざんを検出できる', async () => {
   const md = forge.md.sha256.create();
   md.update(signedInfoBytes.toString('binary'), 'raw');
   const signatureB64 = forge.util.encode64(keys.privateKey.sign(md));
-  const certB64 = forge.util.encode64(forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes());
+  const certB64 = forge.util.encode64(
+    forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes(),
+  );
   const finalXml = assembleSignedXml(KOUSEI, prep.refs, prep.signatureId, signatureB64, certB64);
 
   // 構成情報内の値を書き換える → ダイジェスト不一致で落ちるはず
@@ -98,6 +104,12 @@ test('buildSignedInfoXml の参照URIが公式仕様（#%エンコード構成�
   const refs = await collectReferences(KOUSEI, FILES);
   const xml = buildSignedInfoXml(refs);
   assert.match(xml, /URI="#%E6%A7%8B%E6%88%90%E6%83%85%E5%A0%B1"/);
-  assert.match(xml, /<CanonicalizationMethod Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>/);
-  assert.match(xml, /<SignatureMethod Algorithm="http:\/\/www\.w3\.org\/2001\/04\/xmldsig-more#rsa-sha256"\/>/);
+  assert.match(
+    xml,
+    /<CanonicalizationMethod Algorithm="http:\/\/www\.w3\.org\/TR\/2001\/REC-xml-c14n-20010315"\/>/,
+  );
+  assert.match(
+    xml,
+    /<SignatureMethod Algorithm="http:\/\/www\.w3\.org\/2001\/04\/xmldsig-more#rsa-sha256"\/>/,
+  );
 });

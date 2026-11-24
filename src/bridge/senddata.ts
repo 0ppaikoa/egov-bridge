@@ -36,10 +36,7 @@ export async function sendAppliData(
   const entries = new Map<string, Uint8Array>();
   for (const procId of procIds) {
     const folder = procFolder(identifier, procId);
-    const collected = collectProcFiles(
-      (name) => vfs.readFile(`${folder}/${name}`),
-      confInfoName,
-    );
+    const collected = collectProcFiles((name) => vfs.readFile(`${folder}/${name}`), confInfoName);
     entries.set(`${procId}/`, new Uint8Array());
     for (const name of [confInfoName, ...collected.sendFileNames]) {
       const data = collected.files.get(name);
@@ -71,7 +68,11 @@ export async function sendAppliData(
     }
     if (res.text.includes('The requested URL was rejected')) {
       const m = /Your support ID is: ([^<]+)/.exec(res.text);
-      return { ok: false, code: 'WAF', supportId: m ? m[1].trim() : '(support ID を取得できませんでした)' };
+      return {
+        ok: false,
+        code: 'WAF',
+        supportId: m ? m[1].trim() : '(support ID を取得できませんでした)',
+      };
     }
     if (!res.headers.get('AppDataReceiveFlag')) {
       return { ok: false, code: 'OTHER', detail: 'AppDataReceiveFlag ヘッダがありません' };

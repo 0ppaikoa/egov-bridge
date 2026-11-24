@@ -4,6 +4,21 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   { ignores: ['node_modules/', 'dist/', 'build/'] },
+  {
+    files: ['test/**/*.mjs', 'test/**/*.ts'],
+    languageOptions: {
+      globals: {
+        Buffer: 'readonly',
+        Response: 'readonly',
+        fetch: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly',
+      },
+    },
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettier,
@@ -39,7 +54,10 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
+      ],
       'no-console': 'off',
     },
   },

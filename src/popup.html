@@ -5,172 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>e-Gov 電子申請ブリッジ</title>
   <style>
-    :root {
-      --ink: #211f1c;        /* 本文の墨 */
-      --muted: #5d5a52;      /* 補足の墨 */
-      --paper: #fcfaf5;      /* 生成りの紙 */
-      --rule: #d9d5c9;       /* 罫線 */
-      --accent: #a63a2b;     /* 朱（印章） */
-      --serif: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
-      --gothic: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Yu Gothic UI", "Meiryo", "MS PGothic", sans-serif;
-      --mono: "SFMono-Regular", "Consolas", "Menlo", monospace;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      width: 320px;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--gothic);
+      width: 300px;
+      margin: 0;
+      padding: 12px 14px 10px;
+      background: #ffffff;
+      color: #1f1f1f;
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Yu Gothic UI", "Meiryo", sans-serif;
       font-size: 13px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    ::selection { background: #ecd9d4; }
-
-    header {
-      padding: 14px 16px 12px;
-      border-bottom: 2px solid var(--ink);
-    }
-    .rule-kicker {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .kicker-right {
-      display: inline-block;
-      border: 1.5px solid var(--accent);
-      color: var(--accent);
-      padding: 0 5px;
-      font-family: var(--gothic);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-indent: 0.2em;
-      border-radius: 1px;
+      line-height: 1.5;
     }
     h1 {
-      font-family: var(--serif);
-      font-size: 19px;
+      margin: 0 0 2px;
+      font-size: 14px;
       font-weight: 700;
-      letter-spacing: 0.04em;
-      line-height: 1.35;
     }
     .sub {
-      margin-top: 2px;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.02em;
+      margin: 0 0 10px;
+      font-size: 11px;
+      color: #666;
     }
-
-    nav { padding: 6px 0 4px; }
+    nav { border-top: 1px solid #e2e2e2; }
     a.item {
-      display: grid;
-      grid-template-columns: 2.2em 1fr auto;
-      align-items: baseline;
-      gap: 0.5em;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--rule);
+      display: block;
+      padding: 9px 2px;
+      border-bottom: 1px solid #e2e2e2;
       text-decoration: none;
-      color: var(--ink);
+      color: #0b57d0;
     }
-    a.item:first-child { border-top: 1px solid var(--rule); }
-    a.item:hover { background: #f3f0e6; }
+    a.item:hover { background: #f5f5f5; }
     a.item:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: -2px;
-      background: #f3f0e6;
+      outline: 2px solid #0b57d0;
+      outline-offset: 1px;
+      background: #f5f5f5;
     }
-    .no {
-      font-family: var(--serif);
-      font-size: 15px;
-      color: var(--accent);
-      font-weight: 700;
-    }
-    .label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-    .desc {
-      display: block;
-      margin-top: 2px;
-      font-size: 10.5px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-    .arrow {
-      font-family: var(--serif);
-      color: var(--accent);
-      font-size: 15px;
-    }
-
+    .label { display: block; font-size: 13px; font-weight: 600; }
+    .desc { display: block; margin-top: 1px; font-size: 11px; color: #666; }
     footer {
-      padding: 9px 16px 12px;
-      border-top: 2px solid var(--ink);
+      margin-top: 10px;
       font-size: 10px;
-      line-height: 1.6;
-      color: var(--muted);
+      color: #777;
     }
-    footer .colophon {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.06em;
-      color: #8a867c;
-    }
+    footer .ver { font-family: Consolas, Menlo, monospace; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="rule-kicker">
-      <span>e-Gov ELECTRONIC APPLICATION</span>
-      <span class="kicker-right">非公式</span>
-    </div>
-    <h1>電子申請<br />ブリッジ</h1>
-    <p class="sub">e-Gov電子申請への入口と、申請画面の動作を助けるブラウザ拡張です。</p>
-  </header>
+  <h1>e-Gov 電子申請ブリッジ</h1>
+  <p class="sub">e-Gov電子申請の入り口を開きます。</p>
 
   <nav aria-label="申請画面への入口">
     <a class="item" href="https://shinsei.e-gov.go.jp/recept/startup/" target="_blank" rel="noopener noreferrer">
-      <span class="no">一</span>
-      <span>
-        <span class="label">申請画面を開く</span>
-        <span class="desc">ログイン後、公式アプリと同じ手順の申請画面へ進みます</span>
-      </span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <span class="label">申請画面を開く</span>
+      <span class="desc">ログイン後、公式アプリと同じ手順の申請画面へ進みます</span>
     </a>
     <a class="item" href="https://shinsei.e-gov.go.jp/recept/procedure-search/" target="_blank" rel="noopener noreferrer">
-      <span class="no">二</span>
-      <span>
-        <span class="label">手続を検索する</span>
-        <span class="desc">手続名称・手続IDから申請したい手続を探します</span>
-      </span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <span class="label">手続を検索する</span>
+      <span class="desc">手続名称・手続IDから申請したい手続を探します</span>
     </a>
     <a class="item" href="https://shinsei.e-gov.go.jp/recept/" target="_blank" rel="noopener noreferrer">
-      <span class="no">三</span>
-      <span>
-        <span class="label">電子申請トップ</span>
-        <span class="desc">e-Gov電子申請のサービス入口ページへ</span>
-      </span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <span class="label">電子申請トップ</span>
+      <span class="desc">e-Gov電子申請のサービス入口ページ</span>
     </a>
   </nav>
 
   <footer>
-    本拡張はデジタル庁とは無関係の非公式ツールです。送信内容の最終確認はご自身の責任で行ってください。
-    <div class="colophon">
-      <span>EGOV-BRIDGE</span>
-      <span>v0.2.1</span>
-    </div>
+    デジタル庁とは無関係の非公式ツールです。<br />
+    <span class="ver">v0.2.2</span>
   </footer>
 </body>
 </html>

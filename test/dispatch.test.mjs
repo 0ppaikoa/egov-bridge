@@ -24,7 +24,7 @@ test('解決値（数値）は resolve に数値のまま入る', async () => {
 });
 
 test('未実装コマンドは reject を返す', async () => {
-  await dispatchCommand(['F3egclInitAppli_initAppli', 'uuid-3']);
+  await dispatchCommand(['F3egclTagConfCheck_tagConfCheck', 'uuid-3']);
   const msg = JSON.parse(listeners[listeners.length - 1]);
   assert.equal(msg.uuid, 'uuid-3');
   assert.match(msg.reject, /未実装/);

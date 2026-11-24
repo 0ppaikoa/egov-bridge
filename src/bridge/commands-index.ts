@@ -23,6 +23,7 @@ import {
   cmdSelectCertificateUI,
   cmdSaveAppliDataPlaceholder,
 } from './commands-misc.ts';
+import { initAppli, initDocumentDetails } from './init-appli.ts';
 
 function notImpl(name: string): CommandEntry['fn'] {
   return () => {
@@ -40,15 +41,23 @@ function closeWindow(): void {
   window.close();
 }
 
+function cmdInitAppli(args: string[]): Promise<number> {
+  return initAppli(args);
+}
+
+function cmdInitDocumentDetails(args: string[]): number {
+  return initDocumentDetails(args);
+}
+
 export const COMMANDS: Record<string, CommandEntry> = {
   AddAttachedFile_DragEnter: { oneWay: false, fn: cmdAddAttachedFileDragEnter },
-  F3egclInitAppli_initAppli: { oneWay: false, fn: notImpl('F3egclInitAppli_initAppli') },
+  F3egclInitAppli_initAppli: { oneWay: false, fn: cmdInitAppli },
   AddAttachedFile_selectFile: { oneWay: false, fn: notImpl('AddAttachedFile_selectFile') },
   F3egclInitAppli_tagMapping: { oneWay: false, fn: notImpl('F3egclInitAppli_tagMapping') },
   F3egclXMLDataAppli_addForm: { oneWay: false, fn: notImpl('F3egclXMLDataAppli_addForm') },
   F3egclInitAppli_initDocumentDetails: {
     oneWay: false,
-    fn: notImpl('F3egclInitAppli_initDocumentDetails'),
+    fn: cmdInitDocumentDetails,
   },
   F3egclXMLDataAppli_storeWorkXMLFile: {
     oneWay: false,

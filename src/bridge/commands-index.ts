@@ -24,6 +24,7 @@ import {
   cmdSaveAppliDataPlaceholder,
 } from './commands-misc.ts';
 import { initAppli, initDocumentDetails } from './init-appli.ts';
+import { setXMLFormInfo, getXMLFormInfo } from './forminfo.ts';
 
 function notImpl(name: string): CommandEntry['fn'] {
   return () => {
@@ -47,6 +48,14 @@ function cmdInitAppli(args: string[]): Promise<number> {
 
 function cmdInitDocumentDetails(args: string[]): number {
   return initDocumentDetails(args);
+}
+
+function cmdSetXMLFormInfo(args: string[]): number {
+  return setXMLFormInfo(args);
+}
+
+function cmdGetXMLFormInfo(args: string[]): string {
+  return getXMLFormInfo(args);
 }
 
 export const COMMANDS: Record<string, CommandEntry> = {
@@ -101,11 +110,11 @@ export const COMMANDS: Record<string, CommandEntry> = {
   },
   F3egclXMLDataAppli_setXMLFormInfo: {
     oneWay: false,
-    fn: notImpl('F3egclXMLDataAppli_setXMLFormInfo'),
+    fn: cmdSetXMLFormInfo,
   },
   F3egclXMLDataAppli_getXMLFormInfo: {
     oneWay: false,
-    fn: notImpl('F3egclXMLDataAppli_getXMLFormInfo'),
+    fn: cmdGetXMLFormInfo,
   },
   F3egclFileManageAppli_SignAndSave: {
     oneWay: false,

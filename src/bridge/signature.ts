@@ -7,7 +7,7 @@
 //  - 参照URI: 構成情報は "#" + WebUtility.UrlEncode("構成情報")、
 //    申請書ファイルはファイル名そのまま、添付ファイルは WebUtility.UrlEncode(ファイル名)
 //  - 構成情報は C14N 変換あり、ファイル群は変換なし。ダイジェストは SHA-256
-import forge from 'node-forge';
+import { importRsaPublicKeyFromCertificate } from './der.ts';
 import { DOMParser } from '@xmldom/xmldom';
 import { c14n } from '../c14n.ts';
 import { bytesToBase64, base64ToBytes, sha256, webUtilityUrlEncode } from './bytes.ts';
@@ -240,15 +240,14 @@ export async function verifySignatureXml(
   const data = new TextEncoder().encode(canonical);
 
   try {
-    const der = base64ToBytes(textContent(certEl).replace(/\s+/g, ''));
-    const asn1 = forge.asn1.fromDer(forge.util.binary.raw.encode(der));
-    const cert = forge.pki.certificateFromAsn1(asn1);
-    const md = forge.md.sha256.create();
-    md.update(forge.util.binary.raw.encode(data));
-    const sigBytes = forge.util.binary.raw.encode(
-      base64ToBytes(textContent(sigValueEl).replace(/\s+/g, '')),
+    const certDer = base64ToBytes(textContent(certEl).replace(/\s+/g, ''));
+    const key = await importRsaPublicKeyFromCertificate(certDer);
+    const ok = await crypto.subtle.verify(
+      'RSASSA-PKCS1-v1_5',
+      key,
+      base64ToBytes(textContent(sigValueEl).replace(/\s+/g, '')) as unknown as BufferSource,
+      data as unknown as BufferSource,
     );
-    const ok = (cert.publicKey as forge.pki.rsa.PublicKey).verify(md.digest().getBytes(), sigBytes);
     checks.push({ name: 'signature-value', ok });
   } catch (e) {
     checks.push({ name: 'signature-value', ok: false, detail: String(e) });

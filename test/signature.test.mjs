@@ -1,9 +1,8 @@
 // 署名パイプラインの offline 検証。
-// kousei.xml を仮想的に構築し、ローカル生成したRSA鍵でサーバ役の署名を行い、
+// kousei.xml を仮想的に構築し、ローカル生成した RSA 鍵でサーバ役の署名を行い、
 // assemble → verify が通ることを確認する（ネットワーク不使用）。
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import forge from 'node-forge';
 import {
   prepareSigning,
   assembleSignedXml,
@@ -11,10 +10,11 @@ import {
   collectReferences,
   buildSignedInfoXml,
 } from '../src/bridge/signature.ts';
+import { makeTestCertificate, signSha256Base64 } from './helpers/cert.mjs';
 
 const KOUSEI = `<?xml version="1.0" encoding="UTF-8"?>
 <DataRoot>
-  <構成情報 Id="構成情報">
+  <構成情報 ID="構成情報">
     <管理情報>
       <手続番号>
         <手続ID>31751</手続ID>
@@ -37,18 +37,11 @@ const FILES = new Map([
   ['attachment-1.pdf', new Uint8Array([0x25, 0x50, 0x44, 0x46, 1, 2, 3, 4])],
 ]);
 
-function makeCert() {
-  const keys = forge.pki.rsa.generateKeyPair(2048);
-  const cert = forge.pki.createCertificate();
-  cert.publicKey = keys.publicKey;
-  cert.serialNumber = '01';
-  cert.validity.notBefore = new Date(Date.now() - 86400000);
-  cert.validity.notAfter = new Date(Date.now() + 365 * 86400000);
-  const attrs = [{ name: 'commonName', value: 'test' }];
-  cert.setSubject(attrs);
-  cert.setIssuer(attrs);
-  cert.sign(keys.privateKey, forge.md.sha256.create());
-  return { keys, cert };
+/** サーバ役: SignedInfo の C14N バイト列に署名して署名済み XML を組み立てる */
+function signLikeServer(kouseiXml, prep) {
+  const { privateKey, certB64 } = makeTestCertificate();
+  const sigB64 = signSha256Base64(Buffer.from(prep.base64CanonicalData, 'base64'), privateKey);
+  return assembleSignedXml(kouseiXml, prep.refs, prep.signatureId, sigB64, certB64);
 }
 
 test('構成情報のダイジェストがC14N経由で計算される', async () => {
@@ -64,35 +57,16 @@ test('署名 → 埋め込み → 検証が通る', async () => {
   const prep = await prepareSigning(KOUSEI, FILES, '20261124120000');
   assert.ok(prep.base64CanonicalData.length > 0);
 
-  // サーバ役: c14n(SignedInfo) のバイト列に署名する
-  const { keys, cert } = makeCert();
-  const signedInfoBytes = Buffer.from(prep.base64CanonicalData, 'base64');
-  const md = forge.md.sha256.create();
-  md.update(signedInfoBytes.toString('binary'), 'raw');
-  const signatureBytes = keys.privateKey.sign(md);
-  const signatureB64 = forge.util.encode64(signatureBytes);
-  const certDer = forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes();
-  const certB64 = forge.util.encode64(certDer);
-
-  const finalXml = assembleSignedXml(KOUSEI, prep.refs, prep.signatureId, signatureB64, certB64);
-
-  // 検証
+  const finalXml = signLikeServer(KOUSEI, prep);
   const result = await verifySignatureXml(finalXml, FILES);
+
   assert.equal(result.ok, true, JSON.stringify(result.checks, null, 2));
   assert.ok(result.checks.some((c) => c.name === 'signature-value' && c.ok));
 });
 
 test('改ざんを検出できる', async () => {
   const prep = await prepareSigning(KOUSEI, FILES, '20261124120001');
-  const { keys, cert } = makeCert();
-  const signedInfoBytes = Buffer.from(prep.base64CanonicalData, 'base64');
-  const md = forge.md.sha256.create();
-  md.update(signedInfoBytes.toString('binary'), 'raw');
-  const signatureB64 = forge.util.encode64(keys.privateKey.sign(md));
-  const certB64 = forge.util.encode64(
-    forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes(),
-  );
-  const finalXml = assembleSignedXml(KOUSEI, prep.refs, prep.signatureId, signatureB64, certB64);
+  const finalXml = signLikeServer(KOUSEI, prep);
 
   // 構成情報内の値を書き換える → ダイジェスト不一致で落ちるはず
   const tampered = finalXml.replace('<手続ID>31751</手続ID>', '<手続ID>99999</手続ID>');

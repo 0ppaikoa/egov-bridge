@@ -79,6 +79,22 @@ parity-sign.mjs   : すべて一致 (12 checks)
 2. テスト用 kousei.xml の属性を `Id=` にしていたが、ネイティブの参照解決は `ID=`。
    パリティ検証をしていなければ、実機で「署名不正」になるまで気付けなかった。
 
+## ブラウザ互換性の検証（重要）
+
+`npm run build` の警告 `Module "util"/"crypto" has been externalized for browser compatibility`
+は**実害がある**。Vite は Node 組み込みを空オブジェクトに差し替えるため、
+モジュール初期化時に `util.deprecate(...)` を呼ぶコードは**読み込んだ瞬間に TypeError** になる。
+Node 上のテストでは実物の `util` があるので検出できない。
+
+これに該当したのが `xml-crypto`（`lib/utils.js` のモジュールスコープで `util.deprecate`）で、
+導入したらブラウザで content script が起動しなくなるところだった。対策:
+
+- C14N は依存ゼロの自前実装（`src/c14n.ts`）に戻し、.NET をオラクルに正しさを担保
+- 署名検証は `node-forge`（約 1MB、`crypto`/`stream`/`util` を optional 参照）を廃止し、
+  `src/bridge/der.ts`（X.509 から SPKI を抜く最小 DER 走査）+ WebCrypto に置換
+
+結果、バンドルは **1,200KB → 307KB**、`require___vite_browser_external` / `forge` の参照は 0。
+
 ## 未カバー（正直な限界）
 
 - **実サーバが返す kousei.xml の実物**では未検証。属性名（`ID` / `Id`）や要素順はサーバ生成物に依存する。
@@ -86,3 +102,5 @@ parity-sign.mjs   : すべて一致 (12 checks)
 - 証明書チェーン・失効確認（CRL/OCSP）は検証していない。e-Gov 側の判定に委ねる。
 - `XmlDsigC14NTransform` は .NET 10 のもの。ネイティブは .NET 10 (macOS 2.1.0.0) なので一致する想定だが、
   Windows 版 3.1.0.0 との差は未確認。
+- **実ブラウザでの起動確認は未実施**（このホストに Chrome が無い）。バンドルに Node 組み込み参照が
+  残っていないことは機械的に確認したが、実際に e-Gov のページで content script が動くかは未検証。

@@ -3,9 +3,9 @@
 // pre-send → start-sign → poll → 本送信 の順序と、署名済み kousei.xml を検証する。
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import forge from 'node-forge';
+import { makeTestCertificate, signSha256Base64 } from './helpers/cert.mjs';
 
-// テスト用ウィンドウ（認証URLを開く部分だけをスタブ）
+// ページ依存の最小スタブ（CSRF 取得と認証URLオープン）
 globalThis.window = { open: () => ({ closed: false }) };
 globalThis.document = { getElementsByName: () => [{ value: 'test-csrf-token' }] };
 
@@ -15,7 +15,7 @@ const { verifySignatureXml } = await import('../src/bridge/signature.ts');
 
 const KOUSEI = `<?xml version="1.0" encoding="UTF-8"?>
 <DataRoot>
-  <構成情報 Id="構成情報">
+  <構成情報 ID="構成情報">
     <管理情報><手続番号><手続ID>31751</手続ID></手続番号></管理情報>
     <申請書属性情報>
       <申請書様式ID>000000000000000001</申請書様式ID>
@@ -29,20 +29,8 @@ test('SignAndSend: pre-send → 署名 → 本送信 が順序通りに実行さ
   vfs.writeFile('/work/test-id/20251/kousei.xml', KOUSEI);
   vfs.writeFile('/work/test-id/20251/form-01.xml', '<Form>dummy</Form>');
 
-  // テスト用の鍵・証明書
-  const keys = forge.pki.rsa.generateKeyPair(2048);
-  const cert = forge.pki.createCertificate();
-  cert.publicKey = keys.publicKey;
-  cert.serialNumber = '01';
-  cert.validity.notBefore = new Date(Date.now() - 86400000);
-  cert.validity.notAfter = new Date(Date.now() + 365 * 86400000);
-  const attrs = [{ name: 'commonName', value: 'test-ca' }];
-  cert.setSubject(attrs);
-  cert.setIssuer(attrs);
-  cert.sign(keys.privateKey, forge.md.sha256.create());
-  const certB64 = forge.util.encode64(
-    forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes(),
-  );
+  // サーバ側の署名鍵と証明書（C# ハーネスは不要。テスト内で DER を組み立てる）
+  const { privateKey, certB64 } = makeTestCertificate('sign-flow-test');
 
   const calls = [];
   let signedDataB64 = null;
@@ -59,8 +47,7 @@ test('SignAndSend: pre-send → 署名 → 本送信 が順序通りに実行さ
       });
     }
     if (u.includes('/digital-auth/start-sign')) {
-      const body = String(opts.body);
-      const params = new URLSearchParams(body);
+      const params = new URLSearchParams(String(opts.body));
       signedDataB64 = params.get('data');
       assert.ok(signedDataB64, 'start-sign に data が含まれていること');
       return new Response(
@@ -77,9 +64,7 @@ test('SignAndSend: pre-send → 署名 → 本送信 が順序通りに実行さ
     if (u.includes('/digital-auth/poll')) {
       assert.ok(signedDataB64, 'poll の前に start-sign が呼ばれていること');
       // サーバ役: 受け取った SignedInfo (C14N済み) に署名して返す
-      const md = forge.md.sha256.create();
-      md.update(forge.util.decode64(signedDataB64));
-      const signatureB64 = forge.util.encode64(keys.privateKey.sign(md));
+      const signatureB64 = signSha256Base64(Buffer.from(signedDataB64, 'base64'), privateKey);
       return new Response(JSON.stringify({ Signature: signatureB64, Certificate: certB64 }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -99,7 +84,7 @@ test('SignAndSend: pre-send → 署名 → 本送信 が順序通りに実行さ
   ]);
   assert.equal(result, 0);
 
-  // fetch の呼び出し順序を検証
+  // fetch の呼び出し順序
   const kinds = calls.map((c) => {
     if (c.url.includes('AppDataReceive'))
       return `AppDataReceive:preSendFlag=${c.headers['preSendFlag']}`;

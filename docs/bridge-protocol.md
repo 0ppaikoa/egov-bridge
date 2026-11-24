@@ -75,7 +75,7 @@ JS → ネイティブ（JSON文字列をパースすると配列）:
 - 検証環境: `https://shinsei.kn.e-gov.go.jp/`（要 Basic 認証、401 が返る）
 - 開発/体験版: `shinsei2.sbx.e-gov.go.jp`（`/Taiken` パス）、`shinsei-min.kn.e-gov.go.jp`（`account-min.kn...`）
 - アプリは `/recept/startup/?proc_id=...&group_id=...&fqdn=<host>` で起動し、`fqdn` はホワイトリスト内のみ受け付ける
-- アプリは `User-Agent` に ` /clientId=<id>/<version>` を付加する（サーバは必須チェックをしているか未確認）
+- アプリは `User-Agent` に ` /clientId=#eG0v@CliEnT!/<バージョン>` を付加する（この拡張の `rules/ua.json` も同様の UA を `declarativeNetRequest` で設定する。値は macOS版バイナリのリソースから抽出）
 - セッション識別: Cookie `JSESSIONID`、CSRF: hidden input `_csrf` → ヘッダ `X-CSRF-Token`
 
 ## 法的・運用上の注意（要約）

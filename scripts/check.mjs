@@ -22,8 +22,29 @@ ok('version present', typeof manifest.version === 'string' && manifest.version.l
 const referenced = [];
 if (manifest.background?.service_worker) referenced.push(manifest.background.service_worker);
 for (const cs of manifest.content_scripts ?? []) referenced.push(...(cs.js ?? []));
+if (manifest.action?.default_popup) referenced.push(manifest.action.default_popup);
 for (const rel of referenced) {
   ok(`referenced file exists: ${rel}`, existsSync(path.join(root, rel)));
+}
+
+// declarativeNetRequest ルールの静的検証
+for (const res of manifest.declarative_net_request?.rule_resources ?? []) {
+  const rulePath = path.join(root, res.path);
+  ok(`dnr rule file exists: ${res.path}`, existsSync(rulePath));
+  if (!existsSync(rulePath)) continue;
+  let rules = null;
+  try {
+    rules = JSON.parse(readFileSync(rulePath, 'utf8'));
+  } catch (e) {
+    ok(`dnr rules parse as JSON: ${res.path}`, false);
+    continue;
+  }
+  ok(`dnr rules are an array: ${res.path}`, Array.isArray(rules));
+  const ids = new Set(rules.map((r) => r?.id));
+  ok('dnr rule ids are unique', ids.size === rules.length && [...ids].every((id) => Number.isInteger(id) && id > 0));
+  for (const r of rules) {
+    ok(`dnr rule has action/condition: id=${r?.id}`, !!r?.action?.type && !!r?.condition);
+  }
 }
 
 const srcDir = path.join(root, 'src');

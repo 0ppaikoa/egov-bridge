@@ -11,9 +11,10 @@ import os, zipfile
 
 version = os.environ['VERSION']
 files = ['manifest.json', 'README.md', 'LICENSE']
-for dirpath, _dirnames, filenames in os.walk('src'):
-    for name in sorted(filenames):
-        files.append(os.path.join(dirpath, name))
+for base in ('src', 'rules'):
+    for dirpath, _dirnames, filenames in os.walk(base):
+        for name in sorted(filenames):
+            files.append(os.path.join(dirpath, name))
 
 os.makedirs('dist', exist_ok=True)
 out = f'dist/egov-bridge-{version}.zip'

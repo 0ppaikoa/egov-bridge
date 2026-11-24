@@ -34,7 +34,7 @@ jobs:
           zips = glob.glob('dist/*.zip')
           assert len(zips) == 1, zips
           names = zipfile.ZipFile(zips[0]).namelist()
-          for need in ('manifest.json', 'src/shim.js', 'src/bridge.js', 'src/background.js', 'README.md', 'LICENSE'):
+          for need in ('manifest.json', 'src/shim.js', 'src/bridge.js', 'src/background.js', 'src/popup.html', 'rules/ua.json', 'README.md', 'LICENSE'):
               assert need in names, f'missing: {need}'
           print('zip OK:', zips[0], names)
           EOF

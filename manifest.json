@@ -2,13 +2,33 @@
   "manifest_version": 3,
   "name": "e-Gov 電子申請ブリッジ（非公式）",
   "short_name": "e-Gov bridge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "e-Gov電子申請をブラウザから直接操作するための実験的ブリッジ。デジタル庁とは無関係の非公式ツール。",
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "declarativeNetRequest"
+  ],
   "host_permissions": [
     "https://shinsei.e-gov.go.jp/*",
-    "https://shinsei.kn.e-gov.go.jp/*"
+    "https://shinsei.kn.e-gov.go.jp/*",
+    "https://shinsei2.sbx.e-gov.go.jp/*",
+    "https://shinsei-min.kn.e-gov.go.jp/*",
+    "https://account.e-gov.go.jp/*",
+    "https://account-min.kn.e-gov.go.jp/*"
   ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ua",
+        "enabled": true,
+        "path": "rules/ua.json"
+      }
+    ]
+  },
+  "action": {
+    "default_title": "e-Gov 電子申請ブリッジ（非公式）",
+    "default_popup": "src/popup.html"
+  },
   "background": {
     "service_worker": "src/background.js"
   },
@@ -16,18 +36,26 @@
     {
       "matches": [
         "https://shinsei.e-gov.go.jp/*",
-        "https://shinsei.kn.e-gov.go.jp/*"
+        "https://shinsei.kn.e-gov.go.jp/*",
+        "https://shinsei2.sbx.e-gov.go.jp/*",
+        "https://shinsei-min.kn.e-gov.go.jp/*"
       ],
-      "js": ["src/shim.js"],
+      "js": [
+        "src/shim.js"
+      ],
       "world": "MAIN",
       "run_at": "document_start"
     },
     {
       "matches": [
         "https://shinsei.e-gov.go.jp/*",
-        "https://shinsei.kn.e-gov.go.jp/*"
+        "https://shinsei.kn.e-gov.go.jp/*",
+        "https://shinsei2.sbx.e-gov.go.jp/*",
+        "https://shinsei-min.kn.e-gov.go.jp/*"
       ],
-      "js": ["src/bridge.js"],
+      "js": [
+        "src/bridge.js"
+      ],
       "run_at": "document_start"
     }
   ]

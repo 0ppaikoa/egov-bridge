@@ -13,7 +13,7 @@ const manifest = defineManifest({
   description:
     'e-Gov電子申請をブラウザから直接操作するための実験的ブリッジ。デジタル庁とは無関係の非公式ツール。',
   minimum_chrome_version: '111',
-  permissions: ['declarativeNetRequestWithHostAccess'],
+  permissions: ['declarativeNetRequestWithHostAccess', 'scripting'],
   host_permissions: [
     'https://shinsei.e-gov.go.jp/*',
     'https://shinsei.kn.e-gov.go.jp/*',

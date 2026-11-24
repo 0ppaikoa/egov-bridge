@@ -21,6 +21,7 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "^3.0.0",
     "@eslint/js": "^10.0.1",
+    "@types/chrome": "^0.3.7",
     "@types/node": "^26.6.6",
     "archiver": "^7.0.1",
     "eslint": "^10.15.0",

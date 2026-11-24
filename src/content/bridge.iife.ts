@@ -6,6 +6,7 @@
 // モジュール群が担当する。拡張機能の background は使わない。
 import { dispatchCommand } from '../bridge/dispatch.ts';
 import { log } from '../bridge/log.ts';
+import { installDiagnostics } from '../bridge/diagnostics.ts';
 
 interface WebviewLike {
   addEventListener(type: string, fn: unknown): void;
@@ -20,6 +21,10 @@ interface WebviewLike {
   const w = window as unknown as Record<string, unknown> & { chrome?: Record<string, unknown> };
   if (w.__egovBridgeInstalled) return;
   Object.defineProperty(window, '__egovBridgeInstalled', { value: true });
+
+  // どのコマンドが飛んだかだけを記録する（引数は保存しない＝個人情報を含めない）
+  const commandLog: string[] = [];
+  Object.defineProperty(window, '__egovCmdLog', { value: commandLog });
 
   const chromeObj = (
     w.chrome && typeof w.chrome === 'object' ? w.chrome : (w.chrome = {})
@@ -47,9 +52,17 @@ interface WebviewLike {
         log('postMessage: unexpected payload', parsed);
         return;
       }
+      if (typeof parsed[0] === 'string') {
+        commandLog.push(parsed[0]);
+        if (commandLog.length > 500) commandLog.shift();
+      }
       void dispatchCommand(parsed).catch((e: unknown) => log('dispatch crashed:', e));
     },
   };
   chromeObj.webview = chromeObj.webview ?? webview;
+
+  // ポップアップ（chrome.scripting.executeScript）から診断情報を取れるようにする
+  installDiagnostics();
+
   log('bridge installed (document_start)');
 })();
